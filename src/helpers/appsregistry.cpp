@@ -22,7 +22,7 @@
 #include "../apps/textinput.h"
 #include "../apps/vfocfg.h"
 
-#include "../driver/uart.h"
+#include "../driver/uart.hpp"
 
 uint8_t appsCount = 0;
 uint8_t appsToRunCount = 0;

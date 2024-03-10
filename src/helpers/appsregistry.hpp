@@ -1,7 +1,7 @@
 #ifndef APPSREGISTRY_H
 #define APPSREGISTRY_H
 
-#include "../globals.h"
+#include "../globals.hpp"
 #include <stdint.h>
 
 App *APPS_GetById(AppType_t id);

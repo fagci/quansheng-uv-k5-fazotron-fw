@@ -1,8 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "driver/bk4819.h"
-#include "driver/keyboard.h"
+#include "driver/bk4819.hpp"
+#include "driver/keyboard.hpp"
 #include <stdint.h>
 
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
