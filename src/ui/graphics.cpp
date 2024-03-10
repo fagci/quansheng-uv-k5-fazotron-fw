@@ -1,11 +1,13 @@
 #include "graphics.hpp"
 #include "../driver/st7565.hpp"
+#include "../printf.hpp"
 #include "fonts/NumbersStepanv3.h"
 #include "fonts/NumbersStepanv4.h"
 #include "fonts/TomThumb.h"
 #include "fonts/muHeavy8ptBold.h"
 #include "fonts/muMatrix8ptRegular.h"
 #include "fonts/symbols.h"
+#include <cstring>
 #include <stdarg.h>
 #include <stdlib.h>
 
