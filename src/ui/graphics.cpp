@@ -272,7 +272,7 @@ static void printString(const GFXfont *gfxFont, uint8_t x, uint8_t y,
 void PrintSmall(uint8_t x, uint8_t y, const char *pattern, ...) {
   va_list args;
   va_start(args, pattern);
-  printString(fontSmall, x, y, true, 0, pattern, args);
+  printString(fontSmall, x, y, C_FILL, POS_L, pattern, args);
   va_end(args);
 }
 
@@ -287,7 +287,7 @@ void PrintSmallEx(uint8_t x, uint8_t y, TextPos posLCR, Color color,
 void PrintMedium(uint8_t x, uint8_t y, const char *pattern, ...) {
   va_list args;
   va_start(args, pattern);
-  printString(fontMedium, x, y, true, 0, pattern, args);
+  printString(fontMedium, x, y, C_FILL, POS_L, pattern, args);
   va_end(args);
 }
 
@@ -302,7 +302,7 @@ void PrintMediumEx(uint8_t x, uint8_t y, TextPos posLCR, Color color,
 void PrintMediumBold(uint8_t x, uint8_t y, const char *pattern, ...) {
   va_list args;
   va_start(args, pattern);
-  printString(fontMediumBold, x, y, true, 0, pattern, args);
+  printString(fontMediumBold, x, y, C_FILL, POS_L, pattern, args);
   va_end(args);
 }
 
@@ -317,7 +317,7 @@ void PrintMediumBoldEx(uint8_t x, uint8_t y, TextPos posLCR, Color color,
 void PrintBigDigits(uint8_t x, uint8_t y, const char *pattern, ...) {
   va_list args;
   va_start(args, pattern);
-  printString(fontBig, x, y, true, 0, pattern, args);
+  printString(fontBig, x, y, C_FILL, POS_L, pattern, args);
   va_end(args);
 }
 
@@ -332,7 +332,7 @@ void PrintBigDigitsEx(uint8_t x, uint8_t y, TextPos posLCR, Color color,
 void PrintBiggestDigits(uint8_t x, uint8_t y, const char *pattern, ...) {
   va_list args;
   va_start(args, pattern);
-  printString(fontBiggest, x, y, true, 0, pattern, args);
+  printString(fontBiggest, x, y, C_FILL, POS_L, pattern, args);
   va_end(args);
 }
 
