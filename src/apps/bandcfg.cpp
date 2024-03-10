@@ -1,12 +1,12 @@
-#include "bandcfg.h"
+#include "bandcfg.hpp"
 #include "../apps/apps.hpp"
-#include "../helper/measurements.h"
-#include "../helper/bandlist.h"
-#include "../misc.h"
-#include "../ui/graphics.h"
-#include "../ui/menu.h"
-#include "finput.h"
-#include "textinput.h"
+#include "../helper/measurements.hpp"
+#include "../helper/bandlist.hpp"
+#include "../misc.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/menu.hpp"
+#include "finput.hpp"
+#include "textinput.hpp"
 #include <stdint.h>
 
 static uint8_t menuIndex = 0;

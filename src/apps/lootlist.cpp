@@ -1,19 +1,19 @@
-#include "lootlist.h"
-#include "../dcs.h"
+#include "lootlist.hpp"
+#include "../dcs.hpp"
 #include "../driver/st7565.hpp"
 #include "../driver/uart.hpp"
-#include "../helper/channels.h"
-#include "../helper/lootlist.h"
-#include "../helper/measurements.h"
-#include "../helper/bandlist.h"
-#include "../misc.h"
-#include "../radio.h"
-#include "../scheduler.h"
-#include "../ui/components.h"
-#include "../ui/graphics.h"
-#include "../ui/menu.h"
-#include "../ui/statusline.h"
-#include "apps.h"
+#include "../helper/bandlist.hpp"
+#include "../helper/channels.hpp"
+#include "../helper/lootlist.hpp"
+#include "../helper/measurements.hpp"
+#include "../misc.hpp"
+#include "../radio.hpp"
+#include "../scheduler.hpp"
+#include "../ui/components.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/menu.hpp"
+#include "../ui/statusline.hpp"
+#include "apps.hpp"
 #include <string.h>
 
 static uint8_t menuIndex = 0;
@@ -256,7 +256,6 @@ bool LOOTLIST_key(KEY_Code_t key, bool bKeyPressed, bool bKeyHeld) {
 
   return false;
 }
-
 
 static App meta = {
     .id = APP_LOOT_LIST,

@@ -1,6 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include "driver/eeprom.hpp"
 #include "globals.hpp"
 #include <stdint.h>
 

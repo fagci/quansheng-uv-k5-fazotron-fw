@@ -1,8 +1,8 @@
-#include "fastscan.h"
+#include "fastscan.hpp"
 #include "../driver/bk4819.hpp"
-#include "../radio.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "../radio.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 
 static uint32_t scanF = 0;
 static uint32_t gotF = 0;

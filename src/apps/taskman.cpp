@@ -1,8 +1,8 @@
-#include "taskman.h"
-#include "../misc.h"
-#include "../scheduler.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "taskman.hpp"
+#include "../misc.hpp"
+#include "../scheduler.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 
 void TASKMAN_Init() { gRedrawScreen = true; }
 

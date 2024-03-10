@@ -84,7 +84,7 @@ typedef enum {
   TX_POW_HIGH,
 } TXOutputPower;
 
-typedef enum {
+/* typedef enum {
   EEPROM_A,         // 000
   EEPROM_B,         // 001
   EEPROM_BL24C64,   // 010 checkbyte default
@@ -93,7 +93,7 @@ typedef enum {
   EEPROM_BL24C512,  // 101
   EEPROM_BL24C1024, // 110
   EEPROM_M24M02,    // 111
-} EEPROMType;
+} EEPROMType; */
 
 typedef enum {
   TX_DISALLOW,

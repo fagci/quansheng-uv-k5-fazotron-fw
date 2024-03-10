@@ -1,7 +1,7 @@
 #include "channels.hpp"
-#include "../driver/eeprom.h"
-#include "../helper/measurements.h"
-#include "../settings.h"
+#include "../driver/eeprom.hpp"
+#include "../helpers/measurements.hpp"
+#include "../settings.hpp"
 #include <stddef.h>
 
 int16_t gScanlistSize = 0;

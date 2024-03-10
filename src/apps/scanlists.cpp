@@ -1,11 +1,11 @@
-#include "groups.h"
-#include "../helper/channels.h"
-#include "../helper/measurements.h"
-#include "../ui/graphics.h"
-#include "../ui/menu.h"
-#include "../ui/statusline.h"
-#include "apps.h"
-#include "textinput.h"
+#include "groups.hpp"
+#include "../helper/channels.hpp"
+#include "../helper/measurements.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/menu.hpp"
+#include "../ui/statusline.hpp"
+#include "apps.hpp"
+#include "textinput.hpp"
 
 static int32_t count = 0;
 

@@ -1,8 +1,8 @@
-#include "messenger.h"
+#include "messenger.hpp"
 #include "../apps/textinput.hpp"
-#include "../helper/msghelper.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "../helper/msghelper.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 
 static char message[16] = {'\0'};
 

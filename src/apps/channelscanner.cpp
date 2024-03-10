@@ -1,13 +1,13 @@
-#include "channelscanner.h"
-#include "../helper/channels.h"
-#include "../helper/lootlist.h"
-#include "../helper/measurements.h"
-#include "../radio.h"
-#include "../svc.h"
-#include "../svc_scan.h"
-#include "../ui/graphics.h"
-#include "../ui/menu.h"
-#include "apps.h"
+#include "channelscanner.hpp"
+#include "../helper/channels.hpp"
+#include "../helper/lootlist.hpp"
+#include "../helper/measurements.hpp"
+#include "../radio.hpp"
+#include "../svc.hpp"
+#include "../svc_scan.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/menu.hpp"
+#include "apps.hpp"
 
 static int32_t currentIndex = 0;
 static int32_t scanIndex = 0;

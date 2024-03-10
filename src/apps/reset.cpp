@@ -1,10 +1,10 @@
-#include "reset.h"
+#include "reset.hpp"
 #include "../driver/st7565.hpp"
-#include "../helper/channels.h"
-#include "../helper/measurements.h"
-#include "../settings.h"
-#include "../ui/graphics.h"
-#include "ARMCM0.h"
+#include "../helper/channels.hpp"
+#include "../helper/measurements.hpp"
+#include "../settings.hpp"
+#include "../ui/graphics.hpp"
+#include "ARMCM0.hpp"
 #include <string.h>
 
 static uint8_t bandsWrote = 0;

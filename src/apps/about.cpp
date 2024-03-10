@@ -1,10 +1,10 @@
-#include "about.h"
+#include "about.hpp"
 #include "../driver/st7565.hpp"
-#include "../misc.h"
-#include "../scheduler.h"
-#include "../ui/graphics.h"
-#include "../ui/statusline.h"
-#include "apps.h"
+#include "../misc.hpp"
+#include "../scheduler.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/statusline.hpp"
+#include "apps.hpp"
 
 const char *qr[] = {
     "111111101111101011111101001111111", "100000101010001010101011101000001",

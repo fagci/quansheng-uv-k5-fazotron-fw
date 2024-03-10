@@ -1,10 +1,10 @@
-#include "finput.h"
+#include "finput.hpp"
 #include "../driver/bk4819.hpp"
 #include "../driver/st7565.hpp"
-#include "../radio.h"
-#include "../scheduler.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "../radio.hpp"
+#include "../scheduler.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 #include <string.h>
 
 uint32_t gFInputTempFreq;

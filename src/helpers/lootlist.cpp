@@ -1,8 +1,8 @@
 #include "lootlist.hpp"
-#include "../dcs.h"
-#include "../driver/bk4819.h"
-#include "../driver/uart.h"
-#include "../scheduler.h"
+#include "../dcs.hpp"
+#include "../driver/bk4819.hpp"
+#include "../driver/uart.hpp"
+#include "../scheduler.hpp"
 
 static Loot loot[LOOT_SIZE_MAX] = {0};
 static int16_t lootIndex = -1;

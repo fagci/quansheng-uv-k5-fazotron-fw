@@ -1,10 +1,10 @@
 #include "../driver/eeprom.hpp"
 #include "../driver/keyboard.hpp"
 #include "../driver/st7565.hpp"
-#include "../helper/measurements.h"
-#include "../settings.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "../helper/measurements.hpp"
+#include "../settings.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 
 static uint32_t page = 0;
 const uint8_t PAGE_SZ = 64;

@@ -1,8 +1,8 @@
 #include "battery.hpp"
-#include "../board.h"
-#include "../helper/measurements.h"
-#include "../misc.h"
-#include "../settings.h"
+#include "../board.hpp"
+#include "../helpers/measurements.hpp"
+#include "../misc.hpp"
+#include "../settings.hpp"
 
 uint16_t gBatteryVoltage = 0;
 uint16_t gBatteryCurrent = 0;

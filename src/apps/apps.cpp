@@ -1,8 +1,8 @@
-#include "apps.h"
+#include "apps.hpp"
 #include "../driver/st7565.hpp"
 #include "../driver/uart.hpp"
-#include "../helper/vfo.h"
-#include "../ui/statusline.h"
+#include "../helper/vfo.hpp"
+#include "../ui/statusline.hpp"
 #include <stddef.h>
 
 #define APPS_STACK_SIZE 8

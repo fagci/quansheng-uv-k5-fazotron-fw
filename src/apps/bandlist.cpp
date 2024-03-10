@@ -1,11 +1,11 @@
-#include "bandlist.h"
+#include "bandlist.hpp"
 #include "../driver/st7565.hpp"
-#include "../helper/measurements.h"
-#include "../helper/numnav.h"
-#include "../helper/bandlist.h"
-#include "../ui/graphics.h"
-#include "../ui/menu.h"
-#include "apps.h"
+#include "../helper/measurements.hpp"
+#include "../helper/numnav.hpp"
+#include "../helper/bandlist.hpp"
+#include "../ui/graphics.hpp"
+#include "../ui/menu.hpp"
+#include "apps.hpp"
 
 static uint8_t menuIndex = 0;
 

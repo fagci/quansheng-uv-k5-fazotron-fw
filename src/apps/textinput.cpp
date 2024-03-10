@@ -1,8 +1,8 @@
-#include "textinput.h"
+#include "textinput.hpp"
 #include "../driver/st7565.hpp"
-#include "../scheduler.h"
-#include "../ui/graphics.h"
-#include "apps.h"
+#include "../scheduler.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
 #include <string.h>
 
 char *gTextinputText = "";

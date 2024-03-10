@@ -1,9 +1,9 @@
-#include "antenna.h"
-#include "../misc.h"
-#include "../radio.h"
-#include "../ui/graphics.h"
-#include "apps.h"
-#include "finput.h"
+#include "antenna.hpp"
+#include "../misc.hpp"
+#include "../radio.hpp"
+#include "../ui/graphics.hpp"
+#include "apps.hpp"
+#include "finput.hpp"
 
 static uint32_t f = 0;
 static uint16_t CHINEESE_BNC[7] = {105, 190, 276, 360, 443, 525, 610};

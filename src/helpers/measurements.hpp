@@ -1,7 +1,7 @@
 #ifndef MEASUREMENTS_H
 #define MEASUREMENTS_H
 
-#include "../misc.h"
+#include "../misc.hpp"
 #include <stdint.h>
 
 static const uint8_t rssi2s[2][15] = {
