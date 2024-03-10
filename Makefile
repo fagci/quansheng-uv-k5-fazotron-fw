@@ -70,9 +70,11 @@ $(TARGET): $(OBJS) | $(BIN_DIR)
 inc/dp32g030/%.h: hardware/dp32g030/%.def
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BSP_HEADERS) $(OBJ_DIR)
+	mkdir -p $(@D)
 	$(CPP) $(CPPFLAGS) $(INC) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(BSP_HEADERS) $(OBJ_DIR)
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.S | $(OBJ_DIR)
