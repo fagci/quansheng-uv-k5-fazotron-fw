@@ -1,13 +1,13 @@
-#include "svc_keyboard.h"
-#include "apps/apps.h"
-#include "driver/audio.h"
-#include "driver/backlight.h"
-#include "driver/gpio.h"
-#include "driver/keyboard.h"
-#include "driver/st7565.h"
-#include "inc/dp32g030/gpio.h"
-#include "scheduler.h"
-#include "settings.h"
+#include "keyboard.hpp"
+#include "../apps/apps.hpp"
+#include "../driver/audio.hpp"
+#include "../driver/backlight.hpp"
+#include "../driver/gpio.hpp"
+#include "../driver/keyboard.hpp"
+#include "../driver/st7565.hpp"
+#include "../inc/dp32g030/gpio.h"
+#include "../scheduler.hpp"
+#include "../settings.hpp"
 
 // NOTE: Important!
 // If app runs app on keypress, keyup passed to next app

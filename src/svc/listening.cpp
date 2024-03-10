@@ -1,8 +1,8 @@
-#include "svc_listening.h"
-// #include "apps/messenger.h"
-#include "driver/bk4819-regs.h"
-#include "driver/bk4819.h"
-#include "radio.h"
+#include "listening.hpp"
+// #include "apps/messenger.hpp"
+#include "driver/bk4819-regs.hpp"
+#include "driver/bk4819.hpp"
+#include "radio.hpp"
 #include <stddef.h>
 
 Loot *(*gListenFn)() = NULL;

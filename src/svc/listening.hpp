@@ -1,7 +1,7 @@
 #ifndef SVC_LISTEN_H
 #define SVC_LISTEN_H
 
-#include "helper/lootlist.h"
+#include "../helpers/lootlist.hpp"
 void SVC_LISTEN_Init();
 void SVC_LISTEN_Update();
 void SVC_LISTEN_Deinit();

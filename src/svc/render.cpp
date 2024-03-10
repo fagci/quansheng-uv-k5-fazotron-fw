@@ -1,8 +1,8 @@
-#include "svc_render.h"
-#include "apps/apps.h"
-#include "driver/st7565.h"
-#include "scheduler.h"
-#include "ui/statusline.h"
+#include "render.hpp"
+#include "apps/apps.hpp"
+#include "driver/st7565.hpp"
+#include "scheduler.hpp"
+#include "ui/statusline.hpp"
 
 static const uint32_t RENDER_TIME = 40;
 static uint32_t lastRender = 0;

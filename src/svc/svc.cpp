@@ -1,13 +1,13 @@
-#include "svc.h"
-#include "driver/uart.h"
-#include "scheduler.h"
-#include "svc_apps.h"
-#include "svc_bat_save.h"
-#include "svc_keyboard.h"
-#include "svc_listening.h"
-#include "svc_render.h"
-#include "svc_scan.h"
-#include "svc_sys.h"
+#include "svc.hpp"
+#include "driver/uart.hpp"
+#include "scheduler.hpp"
+#include "apps.hpp"
+#include "bat_save.hpp"
+#include "keyboard.hpp"
+#include "listening.hpp"
+#include "render.hpp"
+#include "scan.hpp"
+#include "sys.hpp"
 
 typedef struct {
   const char *name;

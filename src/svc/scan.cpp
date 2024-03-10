@@ -1,9 +1,9 @@
-#include "svc_scan.h"
-#include "driver/st7565.h"
-#include "driver/system.h"
-#include "radio.h"
-#include "scheduler.h"
-#include "settings.h"
+#include "scan.hpp"
+#include "driver/st7565.hpp"
+#include "driver/system.hpp"
+#include "radio.hpp"
+#include "scheduler.hpp"
+#include "settings.hpp"
 
 uint16_t gScanSwitchT = 10;
 bool gScanForward = true;
@@ -44,7 +44,7 @@ static void next() {
   }
 }
 
-#include "driver/uart.h"
+#include "driver/uart.hpp"
 void SVC_SCAN_Init() {
   gScanForward = true;
   Log("SCAN init, SF:%u", !!gScanFn);
