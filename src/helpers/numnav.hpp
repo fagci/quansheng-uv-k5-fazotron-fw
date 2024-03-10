@@ -1,7 +1,7 @@
 #ifndef NUMNAV_H
 #define NUMNAV_H
 
-#include "../driver/keyboard.h"
+#include "../driver/keyboard.hpp"
 #include <stdint.h>
 
 extern bool gIsNumNavInput;

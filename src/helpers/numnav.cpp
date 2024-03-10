@@ -1,6 +1,6 @@
 #include "numnav.hpp"
-#include "../driver/st7565.h"
-#include "../driver/uart.h"
+#include "../driver/st7565.hpp"
+#include "../driver/uart.hpp"
 #include <stddef.h>
 #include <string.h>
 

@@ -23,8 +23,6 @@
 #include <stdarg.h>
 #include <string.h>
 
-using namespace mpaland_dbjdbj;
-
 uint8_t UART_IsLogEnabled = 0;
 uint8_t UART_DMA_Buffer[256];
 

@@ -1,11 +1,11 @@
 #include "msghelper.hpp"
-#include "../driver/audio.h"
-#include "../driver/bk4819.h"
-#include "../driver/system.h"
-#include "../external/printf/printf.h"
-#include "../misc.h"
-#include "../radio.h"
-#include "../settings.h"
+#include "../driver/audio.hpp"
+#include "../driver/bk4819.hpp"
+#include "../driver/system.hpp"
+#include "../misc.hpp"
+#include "../printf.hpp"
+#include "../radio.hpp"
+#include "../settings.hpp"
 #include <string.h>
 
 DataPacket packet;

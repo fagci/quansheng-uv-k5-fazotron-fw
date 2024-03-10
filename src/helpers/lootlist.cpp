@@ -56,11 +56,7 @@ Loot *LOOT_AddEx(uint32_t f, bool reuse) {
         .firstTime = elapsedMilliseconds,
         .lastTimeCheck = elapsedMilliseconds,
         .lastTimeOpen = elapsedMilliseconds,
-        .duration = 0,
-        .rssi = 0,
         .open = true, // as we add it when open
-        .ct = 0xFF,
-        .cd = 0xFF,
     };
     return &loot[lootIndex];
   }

@@ -10,10 +10,10 @@ typedef struct {
   uint32_t firstTime;
   uint32_t lastTimeCheck;
   uint32_t lastTimeOpen;
-  uint32_t cd;
-  uint16_t ct;
-  uint16_t duration;
-  uint16_t rssi;
+  uint32_t cd = 0xFF;
+  uint16_t ct = 0xFF;
+  uint16_t duration = 0;
+  uint16_t rssi = 0;
   bool open;
   bool blacklist;
   bool goodKnown;

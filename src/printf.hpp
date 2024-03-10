@@ -21,7 +21,6 @@
 // #define PRINTF_EXTERN_C
 // #endif
 
-namespace mpaland_dbjdbj {
 
 	/**
 	 * Output a character to a custom device like UART, used by the printf() function
@@ -727,7 +726,6 @@ namespace inner {
 		return ret;
 	}
 
-} // namespace mpaland_dbjdbj 
 
 ///////////////////////////////////////////////////////////////////////////////
 // \author (c) C VERSION -- Marco Paland (info@paland.com)

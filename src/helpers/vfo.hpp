@@ -1,7 +1,7 @@
 #ifndef VFO_H
 #define VFO_H
 
-#include "../globals.h"
+#include "../globals.hpp"
 #include <stdint.h>
 
 void VFO_LoadVFOS();
