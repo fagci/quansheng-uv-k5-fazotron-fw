@@ -1,13 +1,13 @@
 #include "graphics.hpp"
-#include "../driver/st7565.h"
-#include "fonts/NumbersStepanv3.hpp"
-#include "fonts/NumbersStepanv4.hpp"
-#include "fonts/TomThumb.hpp"
-#include "fonts/muHeavy8ptBold.hpp"
-#include "fonts/muMatrix8ptRegular.hpp"
-#include "fonts/symbols.hpp"
-#include <stdlib.h>
+#include "../driver/st7565.hpp"
+#include "fonts/NumbersStepanv3.h"
+#include "fonts/NumbersStepanv4.h"
+#include "fonts/TomThumb.h"
+#include "fonts/muHeavy8ptBold.h"
+#include "fonts/muMatrix8ptRegular.h"
+#include "fonts/symbols.h"
 #include <stdarg.h>
+#include <stdlib.h>
 
 #ifndef _swap_int16_t
 #define _swap_int16_t(a, b)                                                    \

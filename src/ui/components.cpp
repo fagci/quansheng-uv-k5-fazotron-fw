@@ -1,6 +1,10 @@
 #include "components.hpp"
 #include "../driver/st7565.hpp"
+#include "../globals.hpp"
 #include "../helpers/measurements.hpp"
+#include "../radio.hpp"
+#include "../settings.hpp"
+#include "globals.hpp"
 #include "graphics.hpp"
 
 void UI_Battery(uint8_t Level) {
@@ -32,7 +36,7 @@ void UI_RSSIBar(uint16_t rssi, uint32_t f, uint8_t y) {
     }
   }
 
-  PrintMediumEx(LCD_WIDTH - 1, BAR_BASE, 2, true, "%d", dBm);
+  PrintMediumEx(LCD_WIDTH - 1, BAR_BASE, POS_R, C_FILL, "%d", dBm);
   if (s < 10) {
     PrintMedium(0, BAR_BASE, "S%u", s);
   } else {
@@ -41,11 +45,11 @@ void UI_RSSIBar(uint16_t rssi, uint32_t f, uint8_t y) {
 }
 
 void UI_FSmall(uint32_t f) {
-  PrintSmallEx(LCD_WIDTH - 1, 15, 2, true,
+  PrintSmallEx(LCD_WIDTH - 1, 15, POS_R, C_FILL,
                modulationTypeOptions[radio->modulation]);
-  PrintSmallEx(LCD_WIDTH - 1, 21, 2, true, BW_NAMES[radio->bw]);
+  PrintSmallEx(LCD_WIDTH - 1, 21, POS_R, C_FILL, BW_NAMES[radio->bw]);
 
-  uint16_t step = StepFrequencyTable[radio->step];
+  uint16_t step = StepFrequencyTable[radio->vfo.step];
 
   PrintSmall(0, 21, "%u.%02uk", step / 100, step % 100);
 
@@ -55,7 +59,7 @@ void UI_FSmall(uint32_t f) {
 
   PrintSmall(74, 21, "SQ:%u", radio->sq.level);
 
-  PrintMediumEx(64, 15, 1, true, "%u.%05u", f / 100000, f % 100000);
+  PrintMediumEx(64, 15, POS_C, C_FILL, "%u.%05u", f / 100000, f % 100000);
 }
 
 void UI_FSmallest(uint32_t f, uint8_t x, uint8_t y) {
