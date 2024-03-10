@@ -165,7 +165,7 @@ static void accept() {
     SETTINGS_Save();
     break;
   case M_SCAN_DELAY:
-    radio->scan.timeout = subMenuIndex;
+    radio->vfo.scan.timeout = subMenuIndex;
     SETTINGS_Save();
     break;
   case M_SQL_OPEN_T:
@@ -179,11 +179,11 @@ static void accept() {
     SETTINGS_Save();
     break;
   case M_SQL_TO_OPEN:
-    radio->scan.openedTimeout = subMenuIndex;
+    radio->vfo.scan.openedTimeout = subMenuIndex;
     SETTINGS_Save();
     break;
   case M_SQL_TO_CLOSE:
-    radio->scan.closedTimeout = subMenuIndex;
+    radio->vfo.scan.closedTimeout = subMenuIndex;
     SETTINGS_Save();
     break;
   case M_BL_SQL:
@@ -252,7 +252,7 @@ static const char *getValue(Menu type) {
     sprintf(Output, "%u", gSettings.batteryCalibration);
     return Output;
   case M_SCAN_DELAY:
-    sprintf(Output, "%ums", radio->scan.timeout);
+    sprintf(Output, "%ums", radio->vfo.scan.timeout);
     return Output;
   case M_SQL_OPEN_T:
     sprintf(Output, "%ums", radio->sq.openTime * 5);
@@ -269,9 +269,9 @@ static const char *getValue(Menu type) {
   case M_MAIN_APP:
     return apps[gSettings.mainApp]->name;
   case M_SQL_TO_OPEN:
-    return SCAN_TIMEOUT_NAMES[radio->scan.openedTimeout];
+    return SCAN_TIMEOUT_NAMES[radio->vfo.scan.openedTimeout];
   case M_SQL_TO_CLOSE:
-    return SCAN_TIMEOUT_NAMES[radio->scan.closedTimeout];
+    return SCAN_TIMEOUT_NAMES[radio->vfo.scan.closedTimeout];
   case M_BL_TIME:
     return BL_TIME_NAMES[gSettings.backlight];
   case M_BL_SQL:
@@ -324,7 +324,7 @@ static void setInitialSubmenuIndex() {
     subMenuIndex = gSettings.backlight;
     break;
   case M_SCAN_DELAY:
-    subMenuIndex = radio->scan.timeout;
+    subMenuIndex = radio->vfo.scan.timeout;
     break;
   case M_SQL_OPEN_T:
     subMenuIndex = radio->sq.openTime;
@@ -333,10 +333,10 @@ static void setInitialSubmenuIndex() {
     subMenuIndex = radio->sq.closeTime;
     break;
   case M_SQL_TO_OPEN:
-    subMenuIndex = radio->scan.openedTimeout;
+    subMenuIndex = radio->vfo.scan.openedTimeout;
     break;
   case M_SQL_TO_CLOSE:
-    subMenuIndex = radio->scan.closedTimeout;
+    subMenuIndex = radio->vfo.scan.closedTimeout;
     break;
   case M_BL_SQL:
     subMenuIndex = gSettings.backlightOnSquelch;

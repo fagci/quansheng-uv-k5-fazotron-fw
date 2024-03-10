@@ -1,7 +1,7 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
-#include "../radio.h"
+#include "../frequency.hpp"
 #include <stdint.h>
 
 #define BATTERY_W 13

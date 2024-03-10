@@ -80,7 +80,7 @@ static void setup() {
   const uint32_t halfBW = StepFrequencyTable[opt.vfo.step] * 64;
   opt.band.bounds.start = centerF - halfBW;
   opt.band.bounds.end = centerF + halfBW;
-  radio->scan.timeout = scanInterval;
+  radio->vfo.scan.timeout = scanInterval;
   startNewScan(true);
 }
 
@@ -93,7 +93,7 @@ void ANALYZER_init() {
   gMonitorMode = false;
 
   centerF = radio->f;
-  initialScanInterval = radio->scan.timeout;
+  initialScanInterval = radio->vfo.scan.timeout;
   opt.vfo.step = radio->step;
   opt.band.squelch = 0;
 
@@ -111,7 +111,7 @@ void ANALYZER_update() {}
 
 void ANALYZER_deinit() {
   SVC_Toggle(SVC_SCAN, false, 0);
-  radio->scan.timeout = initialScanInterval;
+  radio->vfo.scan.timeout = initialScanInterval;
   SVC_Toggle(SVC_LISTEN, true, 1);
 }
 

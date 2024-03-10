@@ -23,7 +23,7 @@ void SVC_LISTEN_Init() {
 
 void SVC_LISTEN_Update() {
   gListenFn();
-  if (radio->scan.timeout < 10) {
+  if (radio->vfo.scan.timeout < 10) {
     BK4819_ResetRSSI();
   }
 }

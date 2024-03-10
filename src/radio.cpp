@@ -599,7 +599,7 @@ void RADIO_UpdateSquelchLevel(bool next) {
 void RADIO_NextFreq(bool next) {
   int8_t dir = next ? 1 : -1;
 
-  if (radio->channel >= 0) {
+  if (radio->vfo.channel >= 0) {
     RADIO_NextCH(next);
     return;
   }

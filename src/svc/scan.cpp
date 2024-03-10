@@ -38,7 +38,7 @@ static void next() {
   lastListenState = false;
   gScanFn(gScanForward);
   lastSettedF = radio->f;
-  SetTimeout(&timeout, radio->scan.timeout);
+  SetTimeout(&timeout, radio->vfo.scan.timeout);
   if (gScanRedraw) {
     gRedrawScreen = true;
   }
@@ -49,7 +49,7 @@ void SVC_SCAN_Init() {
   gScanForward = true;
   Log("SCAN init, SF:%u", !!gScanFn);
   if (!gScanFn) {
-    if (radio->channel >= 0) {
+    if (radio->vfo.channel >= 0) {
       gScanFn = RADIO_NextCH;
     } else {
       gScanFn = RADIO_NextBandFreq;
@@ -62,8 +62,8 @@ void SVC_SCAN_Update() {
   if (lastListenState != gIsListening) {
     lastListenState = gIsListening;
     SetTimeout(&timeout, gIsListening
-                             ? SCAN_TIMEOUTS[radio->scan.openedTimeout]
-                             : SCAN_TIMEOUTS[radio->scan.closedTimeout]);
+                             ? SCAN_TIMEOUTS[radio->vfo.scan.openedTimeout]
+                             : SCAN_TIMEOUTS[radio->vfo.scan.closedTimeout]);
   }
 
   if (CheckTimeout(&timeout)) {
