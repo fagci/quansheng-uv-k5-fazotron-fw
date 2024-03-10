@@ -20,8 +20,8 @@
 #include "../inc/dp32g030/syscon.h"
 #include "../misc.h"
 #include "../scheduler.h"
-#include "system.h"
-#include "uart.h"
+#include "system.hpp"
+#include "uart.hpp"
 #include <string.h>
 
 uint8_t UART_IsLogEnabled = 0;

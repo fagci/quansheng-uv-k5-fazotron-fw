@@ -14,7 +14,7 @@
  *     limitations under the License.
  */
 
-#include "bk4819.h"
+#include "bk4819.hpp"
 #include "../driver/gpio.h"
 #include "../driver/system.h"
 #include "../driver/systick.h"
@@ -23,7 +23,7 @@
 #include "../inc/dp32g030/portcon.h"
 #include "../misc.h"
 #include "../settings.h"
-#include "bk4819-regs.h"
+#include "bk4819-regs.hpp"
 
 #define BK4819_F_MIN 1600000
 #define BK4819_F_MAX 134000000

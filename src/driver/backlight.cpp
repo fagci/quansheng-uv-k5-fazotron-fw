@@ -1,10 +1,10 @@
-#include "backlight.h"
+#include "backlight.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
 #include "../inc/dp32g030/pwmplus.h"
 #include "../settings.h"
-#include "gpio.h"
-#include "system.h"
+#include "gpio.hpp"
+#include "system.hpp"
 
 uint8_t duration = 2;
 uint8_t countdown;

@@ -16,7 +16,7 @@
 
 
 #include "../inc/dp32g030/aes.h"
-#include "../driver/aes.h"
+#include "aes.hpp"
 
 static void AES_Setup_ENC_CBC(bool IsDecrypt, const void *pKey, const void *pIv)
 {

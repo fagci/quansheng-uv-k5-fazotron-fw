@@ -14,11 +14,11 @@
  *     limitations under the License.
  */
 
-#include "i2c.h"
+#include "i2c.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
-#include "gpio.h"
-#include "systick.h"
+#include "gpio.hpp"
+#include "systick.hpp"
 
 void I2C_Start() {
   GPIO_SetBit(&GPIOA->DATA, GPIOA_PIN_I2C_SDA);

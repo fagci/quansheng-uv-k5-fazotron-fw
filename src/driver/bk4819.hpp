@@ -17,7 +17,7 @@
 #ifndef DRIVER_BK4819_h
 #define DRIVER_BK4819_h
 
-#include "../driver/bk4819-regs.h"
+#include "bk4819-regs.hpp"
 #include <stdint.h>
 
 #define VHF_UHF_BOUND1 24000000

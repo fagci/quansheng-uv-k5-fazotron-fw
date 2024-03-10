@@ -14,12 +14,11 @@
  *     limitations under the License.
  */
 
-#include "audio.h"
-#include "driver/bk4819.h"
-#include "driver/gpio.h"
-#include "driver/system.hpp"
-#include "inc/dp32g030/gpio.h"
-#include "misc.h"
+#include "audio.hpp"
+#include "../inc/dp32g030/gpio.h"
+#include "bk4819.hpp"
+#include "gpio.hpp"
+#include "system.hpp"
 
 bool speakerOn = false;
 

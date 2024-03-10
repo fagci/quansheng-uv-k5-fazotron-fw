@@ -15,14 +15,14 @@
  *     limitations under the License.
  */
 
-#include "keyboard.h"
+#include "keyboard.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../misc.h"
 #include "../scheduler.h"
-#include "gpio.h"
-#include "i2c.h"
-#include "system.h"
-#include "systick.h"
+#include "gpio.hpp"
+#include "i2c.hpp"
+#include "system.hpp"
+#include "systick.hpp"
 
 KEY_Code_t gKeyReading0 = KEY_INVALID;
 KEY_Code_t gKeyReading1 = KEY_INVALID;

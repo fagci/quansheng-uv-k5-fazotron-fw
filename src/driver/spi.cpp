@@ -15,10 +15,10 @@
  */
 
 #include "ARMCM0.h"
-#include "inc/dp32g030/spi.h"
-#include "inc/dp32g030/syscon.h"
-#include "inc/dp32g030/irq.h"
-#include "driver/spi.h"
+#include "inc/dp32g030/spi.hpp"
+#include "inc/dp32g030/syscon.hpp"
+#include "inc/dp32g030/irq.hpp"
+#include "driver/spi.hpp"
 
 void SPI0_Init()
 {

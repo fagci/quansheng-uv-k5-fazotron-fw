@@ -1,11 +1,11 @@
-#include "bk1080.h"
+#include "bk1080.hpp"
 #include "../driver/uart.h"
 #include "../inc/dp32g030/gpio.h"
 #include "../misc.h"
-#include "bk1080-regs.h"
-#include "gpio.h"
-#include "i2c.h"
-#include "system.h"
+#include "bk1080-regs.hpp"
+#include "gpio.hpp"
+#include "i2c.hpp"
+#include "system.hpp"
 
 static const uint16_t BK1080_RegisterTable[] = {
     0x0008, 0x1080, 0x0201, 0x0000, 0x40C0, 0x0A1F, 0x002E, 0x02FF, 0x5B11,

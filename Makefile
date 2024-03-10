@@ -31,8 +31,8 @@ SIZE = arm-none-eabi-size
 
 ASFLAGS = $(CPU)
 CFLAGS_COMMON = $(CPU) -Os -MMD
-CFLAGS_COMMON += -fshort-enums -fno-exceptions -ffunction-sections -fdata-sections -fno-builtin -fno-delete-null-pointer-checks
 CFLAGS_COMMON += -Wall -Wextra -Wno-error
+CFLAGS_COMMON += -fshort-enums -fno-exceptions -ffunction-sections -fdata-sections -fno-builtin -fno-delete-null-pointer-checks
 CFLAGS_COMMON += -DPRINTF_USER_DEFINED_PUTCHAR
 # CFLAGS_COMMON += -DPRINTF_INCLUDE_CONFIG_H
 # CFLAGS_COMMON += -DGIT_HASH=\"$(GIT_HASH)\"

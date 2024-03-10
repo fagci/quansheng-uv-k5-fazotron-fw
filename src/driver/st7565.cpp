@@ -14,14 +14,14 @@
  *     limitations under the License.
  */
 
-#include "st7565.h"
+#include "st7565.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/spi.h"
 #include "../misc.h"
 #include "../settings.h"
-#include "gpio.h"
-#include "spi.h"
-#include "system.h"
+#include "gpio.hpp"
+#include "spi.hpp"
+#include "system.hpp"
 #include <stdint.h>
 
 #define NEED_WAIT_FIFO                                                         \

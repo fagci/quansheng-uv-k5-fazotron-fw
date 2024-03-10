@@ -3,7 +3,7 @@
 //
 #include "../inc/dp32g030/rtc.h"
 #include "../external/CMSIS_5/Device/ARM/ARMCM0/Include/ARMCM0.h"
-#include "system.h"
+#include "system.hpp"
 
 uint8_t time[6] = {24, 2, 2, 18, 11, 00};
 
