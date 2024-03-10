@@ -3,7 +3,7 @@
 
 #include "../driver/keyboard.hpp"
 #include "../helpers/appsregistry.hpp"
-#include "../settings.h"
+#include "../settings.hpp"
 
 extern App *gCurrentApp;
 

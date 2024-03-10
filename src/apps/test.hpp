@@ -2,7 +2,7 @@
 #define TEST_H
 
 #include "../helpers/appsregistry.hpp"
-#include "apps.h"
+#include "apps.hpp"
 
 App *TEST_Meta();
 

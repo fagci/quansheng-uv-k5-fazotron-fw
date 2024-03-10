@@ -1,9 +1,9 @@
 #ifndef RADIO_H
 #define RADIO_H
 
-#include "frequency.h"
-#include "helper/channels.h"
-#include "helper/lootlist.h"
+#include "frequency.hpp"
+#include "helpers/channels.hpp"
+#include "helpers/lootlist.hpp"
 #include <stdint.h>
 
 extern CH *radio;

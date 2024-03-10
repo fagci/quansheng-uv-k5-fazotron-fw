@@ -3,7 +3,7 @@
 
 #include "../driver/keyboard.hpp"
 #include "../helpers/appsregistry.hpp"
-#include "../radio.h"
+#include "../radio.hpp"
 #include <stdint.h>
 #include <string.h>
 

@@ -1,7 +1,7 @@
 #ifndef CHANNELS_H
 #define CHANNELS_H
 
-#include "../globals.h"
+#include "../globals.hpp"
 #include <stdint.h>
 
 int16_t CHANNELS_GetCountMax();
