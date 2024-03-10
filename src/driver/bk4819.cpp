@@ -15,15 +15,12 @@
  */
 
 #include "bk4819.hpp"
-#include "../driver/gpio.h"
-#include "../driver/system.h"
-#include "../driver/systick.h"
-#include "../driver/uart.h"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
-#include "../misc.h"
-#include "../settings.h"
+#include "../misc.hpp"
 #include "bk4819-regs.hpp"
+#include "gpio.hpp"
+#include "system.hpp"
 
 #define BK4819_F_MIN 1600000
 #define BK4819_F_MAX 134000000
@@ -40,25 +37,6 @@ bool gRxIdleMode;
 
 const uint8_t DTMF_COEFFS[] = {111, 107, 103, 98, 80,  71,  58,  44,
                                65,  55,  37,  23, 228, 203, 181, 159};
-
-/* const uint8_t SQ[2][6][11] = {
-    {
-        {0, 10, 44, 52, 58, 66, 72, 80, 88, 94, 102},
-        {0, 5, 38, 46, 54, 62, 68, 76, 84, 92, 100},
-        {255, 90, 53, 48, 44, 40, 36, 32, 28, 24, 20},
-        {255, 100, 56, 52, 47, 43, 39, 35, 31, 27, 23},
-        {255, 90, 32, 24, 20, 17, 14, 11, 8, 3, 2},
-        {255, 100, 30, 21, 17, 14, 11, 8, 5, 5, 4},
-    },
-    {
-        {0, 36, 77, 82, 88, 94, 100, 106, 112, 118, 123},
-        {0, 40, 70, 76, 82, 88, 94, 102, 108, 114, 120},
-        {255, 65, 58, 52, 46, 41, 37, 33, 28, 24, 22},
-        {255, 70, 65, 57, 51, 45, 41, 37, 32, 28, 25},
-        {255, 90, 32, 23, 18, 15, 10, 9, 8, 7, 4},
-        {255, 100, 60, 45, 30, 20, 15, 13, 12, 11, 8},
-    },
-}; */
 
 const uint8_t SQ[2][6][11] = {
     {
@@ -412,7 +390,7 @@ void BK4819_SetupSquelch(uint8_t SquelchOpenRSSIThresh,
 
 void BK4819_Squelch(uint8_t sql, uint32_t f, uint8_t OpenDelay,
                     uint8_t CloseDelay) {
-  uint8_t band = f > SETTINGS_GetFilterBound() ? 1 : 0;
+  uint8_t band = f > VHF_UHF_BOUND2 ? 1 : 0; // TODO: use user defined bound?
   BK4819_SetupSquelch(SQ[band][0][sql], SQ[band][1][sql], SQ[band][2][sql],
                       SQ[band][3][sql], SQ[band][4][sql], SQ[band][5][sql],
                       OpenDelay, CloseDelay);
@@ -489,10 +467,7 @@ void BK4819_DisableFilter() {
   BK4819_ToggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA, false);
 }
 
-void BK4819_SelectFilter(uint32_t f) {
-  const Filter filterNeeded =
-      f < SETTINGS_GetFilterBound() ? FILTER_VHF : FILTER_UHF;
-
+void BK4819_SelectFilter(Filter filterNeeded) {
   if (selectedFilter == filterNeeded) {
     return;
   }
@@ -808,17 +783,11 @@ void BK4819_EnableCTCSS() {
   BK4819_WriteRegister(BK4819_REG_51, 0x904A);
 }
 
-uint16_t BK4819_GetRSSI() {
-  return BK4819_ReadRegister(BK4819_REG_67) & 0x1FF;
-}
+uint16_t BK4819_GetRSSI() { return BK4819_ReadRegister(BK4819_REG_67) & 0x1FF; }
 
-uint8_t BK4819_GetNoise() {
-  return BK4819_ReadRegister(BK4819_REG_65) & 0x7F;
-}
+uint8_t BK4819_GetNoise() { return BK4819_ReadRegister(BK4819_REG_65) & 0x7F; }
 
-uint8_t BK4819_GetGlitch() {
-  return BK4819_ReadRegister(BK4819_REG_63) & 0xFF;
-}
+uint8_t BK4819_GetGlitch() { return BK4819_ReadRegister(BK4819_REG_63) & 0xFF; }
 
 uint8_t BK4819_GetSNR() { return (BK4819_ReadRegister(0x61) >> 8) & 0xFF; }
 
@@ -1039,7 +1008,6 @@ void BK4819_ToggleAFDAC(bool on) {
 }
 
 void BK4819_TuneTo(uint32_t f, bool precise) {
-  BK4819_SelectFilter(f);
   BK4819_SetFrequency(f);
   uint16_t reg = BK4819_ReadRegister(BK4819_REG_30);
   if (precise) {

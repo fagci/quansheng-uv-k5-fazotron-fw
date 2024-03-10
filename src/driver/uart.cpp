@@ -15,14 +15,15 @@
  */
 
 #include "../inc/dp32g030/uart.h"
-#include "../external/printf/printf.h"
 #include "../inc/dp32g030/dma.h"
 #include "../inc/dp32g030/syscon.h"
-#include "../misc.h"
-#include "../scheduler.h"
+#include "../printf.hpp"
 #include "system.hpp"
 #include "uart.hpp"
+#include <stdarg.h>
 #include <string.h>
+
+using namespace mpaland_dbjdbj;
 
 uint8_t UART_IsLogEnabled = 0;
 uint8_t UART_DMA_Buffer[256];
@@ -146,18 +147,18 @@ void UART_logf(uint8_t level, const char *pattern, ...) {
     va_start(args, pattern);
     vsnprintf(text, sizeof(text), pattern, args);
     va_end(args);
-    UART_printf("%u %s\n", elapsedMilliseconds, text);
+    UART_printf("%s\n", text);
   }
 }
 
 void Log(const char *pattern, ...) {
-    char text[128];
-    va_list args;
-    va_start(args, pattern);
-    vsnprintf(text, sizeof(text), pattern, args);
-    va_end(args);
-    UART_printf("%u %s\n", elapsedMilliseconds, text);
-    UART_flush();
+  char text[128];
+  va_list args;
+  va_start(args, pattern);
+  vsnprintf(text, sizeof(text), pattern, args);
+  va_end(args);
+  UART_printf("%s\n", text);
+  UART_flush();
 }
 
 #define DMA_INDEX(x, y) (((x) + (y)) % sizeof(UART_DMA_Buffer))

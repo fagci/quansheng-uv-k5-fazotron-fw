@@ -17,7 +17,7 @@
 #ifndef DRIVER_BK1080_H
 #define DRIVER_BK1080_H
 
-#include "bk1080-regs.h"
+#include "bk1080-regs.hpp"
 #include <stdint.h>
 
 typedef enum {

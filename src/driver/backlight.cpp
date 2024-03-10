@@ -1,14 +1,12 @@
 #include "backlight.hpp"
-#include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
 #include "../inc/dp32g030/pwmplus.h"
-#include "../settings.h"
-#include "gpio.hpp"
 #include "system.hpp"
 
-uint8_t duration = 2;
-uint8_t countdown;
-bool state = false;
+static uint8_t duration = 2;
+static uint8_t countdown;
+static bool state = false;
+static uint8_t _brightness = 8;
 
 void BACKLIGHT_Init() {
   // 48MHz / 94 / 1024 ~ 500Hz
@@ -31,8 +29,8 @@ void BACKLIGHT_Init() {
 }
 
 void BACKLIGHT_SetBrightness(uint8_t brigtness) {
+  _brightness = brigtness;
   PWM_PLUS0_CH0_COMP = (1 << brigtness) - 1;
-  // PWM_PLUS0_SWLOAD = 1;
 }
 
 void BACKLIGHT_Toggle(bool on) {
@@ -41,10 +39,8 @@ void BACKLIGHT_Toggle(bool on) {
   }
   state = on;
   if (on) {
-    // GPIO_SetBit(&GPIOB->DATA, GPIOB_PIN_BACKLIGHT);
-    BACKLIGHT_SetBrightness(gSettings.brightness);
+    BACKLIGHT_SetBrightness(_brightness);
   } else {
-    // GPIO_ClearBit(&GPIOB->DATA, GPIOB_PIN_BACKLIGHT);
     BACKLIGHT_SetBrightness(0);
   }
 }

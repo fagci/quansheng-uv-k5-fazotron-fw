@@ -17,8 +17,7 @@
 #include "st7565.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/spi.h"
-#include "../misc.h"
-#include "../settings.h"
+#include "../misc.hpp"
 #include "gpio.hpp"
 #include "spi.hpp"
 #include "system.hpp"
@@ -71,37 +70,10 @@ static void ST7565_FillScreen(uint8_t Value) {
   SPI_ToggleMasterMode(&SPI0->CR, true);
 }
 
-static void fix() {
-  SPI_ToggleMasterMode(&SPI0->CR, false);
-
-  ST7565_WriteByte(0xA2); // bias 9
-
-  ST7565_WriteByte(0xC0); // COM normal
-
-  ST7565_WriteByte(0xA1); // reverse ADC
-
-  ST7565_WriteByte(0xA6); // normal screen
-
-  ST7565_WriteByte(0xA4); // all points normal
-
-  ST7565_WriteByte(0x24); // ???
-
-  ST7565_WriteByte(0x81);                    //
-  ST7565_WriteByte(23 + gSettings.contrast); // brightness 0 ~ 63
-
-  ST7565_WriteByte(0x40); // start line ?
-  ST7565_WriteByte(0xAF); // display on ?
-
-  SPI_WaitForUndocumentedTxFifoStatusBit();
-
-  SPI_ToggleMasterMode(&SPI0->CR, true);
-}
-
 void ST7565_Blit() {
   uint8_t Line;
   uint8_t Column;
 
-  fix();
   SPI_ToggleMasterMode(&SPI0->CR, false);
   ST7565_WriteByte(0x40);
 
@@ -119,7 +91,7 @@ void ST7565_Blit() {
   SPI_ToggleMasterMode(&SPI0->CR, true);
 }
 
-void ST7565_Init() {
+void ST7565_Init(uint8_t contrast) {
   SPI0_Init();
   ST7565_Configure_GPIO_B11();
   SPI_ToggleMasterMode(&SPI0->CR, false);
@@ -133,7 +105,7 @@ void ST7565_Init() {
   ST7565_WriteByte(0x24);
   ST7565_WriteByte(0x81);
   // ST7565_WriteByte(0x1F); // contrast
-  ST7565_WriteByte(23 + gSettings.contrast); // brightness 0 ~ 63
+  ST7565_WriteByte(23 + contrast); // brightness 0 ~ 63
   ST7565_WriteByte(0x2B);
   SYSTEM_DelayMs(1);
   ST7565_WriteByte(0x2E);

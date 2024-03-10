@@ -17,12 +17,11 @@
 
 #include "keyboard.hpp"
 #include "../inc/dp32g030/gpio.h"
-#include "../misc.h"
-#include "../scheduler.h"
+#include "../misc.hpp"
+// #include "../scheduler.h"
 #include "gpio.hpp"
 #include "i2c.hpp"
 #include "system.hpp"
-#include "systick.hpp"
 
 KEY_Code_t gKeyReading0 = KEY_INVALID;
 KEY_Code_t gKeyReading1 = KEY_INVALID;
@@ -237,10 +236,10 @@ void KEYBOARD_CheckKeys(void onKey(KEY_Code_t, bool, bool)) {
     // subsequent fast key repeats
     // fast key repeats for up/down buttons
     // if (Key == KEY_UP || Key == KEY_DOWN) {
-      gKeyBeingHeld = true;
-      gRepeatHeld = true;
-      if ((gDebounceCounter % KEY_REPEAT) == 0)
-        onKey(Key, true, true); // key held event
+    gKeyBeingHeld = true;
+    gRepeatHeld = true;
+    if ((gDebounceCounter % KEY_REPEAT) == 0)
+      onKey(Key, true, true); // key held event
     // }
 
     if (gDebounceCounter < 0xFFFF)

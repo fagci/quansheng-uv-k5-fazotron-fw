@@ -1,7 +1,6 @@
 #include "bk1080.hpp"
-#include "../driver/uart.h"
 #include "../inc/dp32g030/gpio.h"
-#include "../misc.h"
+#include "../misc.hpp"
 #include "bk1080-regs.hpp"
 #include "gpio.hpp"
 #include "i2c.hpp"
@@ -50,7 +49,7 @@ void BK1080_Init(uint32_t f, bool bEnable) {
 
     if (!gIsInitBK1080) {
       for (i = 0; i < ARRAY_SIZE(BK1080_RegisterTable); i++) {
-        BK1080_WriteRegister(i, BK1080_RegisterTable[i]);
+        BK1080_WriteRegister((BK1080_Register_t)i, BK1080_RegisterTable[i]);
       }
       SYSTEM_DelayMs(250);
       BK1080_WriteRegister(BK1080_REG_25_INTERNAL, 0xA83C);

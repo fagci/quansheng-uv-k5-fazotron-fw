@@ -18,7 +18,7 @@
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
 #include "gpio.hpp"
-#include "systick.hpp"
+#include "system.hpp"
 
 void I2C_Start() {
   GPIO_SetBit(&GPIOA->DATA, GPIOA_PIN_I2C_SDA);
