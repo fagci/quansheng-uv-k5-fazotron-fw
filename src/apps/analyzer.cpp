@@ -94,7 +94,7 @@ void ANALYZER_init() {
 
   centerF = radio->f;
   initialScanInterval = radio->vfo.scan.timeout;
-  opt.vfo.step = radio->step;
+  opt.vfo.step = radio->vfo.step;
   opt.band.squelch = 0;
 
   setup();

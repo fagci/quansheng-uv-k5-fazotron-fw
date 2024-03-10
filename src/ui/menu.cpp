@@ -1,8 +1,8 @@
 #include "menu.hpp"
-#include "../driver/st7565.h"
-#include "../external/printf/printf.h"
-#include "../helper/measurements.h"
-#include "../radio.h"
+#include "../driver/st7565.hpp"
+#include "../helpers/measurements.hpp"
+#include "../printf.hpp"
+#include "../radio.hpp"
 #include "globals.hpp"
 #include "graphics.hpp"
 #include <string.h>
@@ -139,7 +139,7 @@ void AcceptRadioConfig(const MenuItem *item, uint8_t subMenuIndex) {
     BANDS_SaveCurrent();
     break;
   case M_STEP:
-    radio->step = subMenuIndex;
+    radio->vfo.step = subMenuIndex;
     BANDS_SaveCurrent();
     break;
   case M_SQ_TYPE:

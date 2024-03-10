@@ -359,9 +359,9 @@ void RADIO_ToggleModulation() {
 }
 
 void RADIO_UpdateStep(bool inc) {
-  uint8_t step = radio->step;
+  uint8_t step = radio->vfo.step;
   IncDec8(&step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
-  radio->step = step;
+  radio->vfo.step = step;
   onVfoUpdate();
 }
 

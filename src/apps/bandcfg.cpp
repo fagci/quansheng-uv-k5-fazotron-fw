@@ -36,7 +36,7 @@ static void setInitialSubmenuIndex() {
     subMenuIndex = radio->modulation;
     break;
   case M_STEP:
-    subMenuIndex = radio->step;
+    subMenuIndex = radio->vfo.step;
     break;
   case M_SQ_TYPE:
     subMenuIndex = radio->sq.levelType;
