@@ -15,22 +15,22 @@
  *
  */
 
-#include "board.h"
-#include "driver/adc.h"
-#include "driver/backlight.h"
-#include "driver/bk1080.h"
-#include "driver/bk4819.h"
-#include "driver/crc.h"
-#include "driver/eeprom.h"
-#include "driver/gpio.h"
-#include "driver/st7565.h"
-#include "driver/system.h"
-#include "helper/battery.h"
+#include "board.hpp"
+#include "driver/adc.hpp"
+#include "driver/backlight.hpp"
+#include "driver/bk1080.hpp"
+#include "driver/bk4819.hpp"
+/* #include "driver/crc.hpp"
+#include "driver/eeprom.hpp"
+#include "driver/gpio.hpp" */
+#include "driver/st7565.hpp"
+// #include "driver/system.hpp"
+// #include "helper/battery.h"
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
-#include "misc.h"
+#include "misc.hpp"
 #include <string.h>
 
 void BOARD_GPIO_Init() {
@@ -432,7 +432,7 @@ void BOARD_Init() {
   BOARD_PORTCON_Init();
   BOARD_GPIO_Init();
   BOARD_ADC_Init();
-  ST7565_Init();
+  ST7565_Init(6);
   BK1080_Init(0, false);
   BK4819_Init();
   BACKLIGHT_Init();
