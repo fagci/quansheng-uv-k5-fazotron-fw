@@ -123,6 +123,7 @@ void AcceptRadioConfig(const MenuItem *item, uint8_t subMenuIndex) {
   case M_BW:
     radio->bw = subMenuIndex;
     BK4819_SetFilterBandwidth(subMenuIndex);
+            RADIO_Save
     BANDS_SaveCurrent();
     break;
   case M_F_TXP:

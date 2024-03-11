@@ -7,6 +7,10 @@
 
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
 
+extern const uint16_t StepFrequencyTable[12];
+extern const char *modulationTypeOptions[6];
+extern const SquelchType sqTypeValues[4];
+
 typedef enum {
   APP_NONE,
   APP_TEST,
@@ -156,6 +160,7 @@ typedef struct {
 } VFO_Params;
 
 typedef struct {
+public:
   ChannelType type;
   uint8_t groups;
   union {
@@ -174,6 +179,8 @@ typedef struct {
   uint8_t codeTypeTX : 4;
   SquelchSettings sq;
   uint8_t gainIndex : 5;
+
+  uint32_t getStep() { return StepFrequencyTable[vfo.step]; }
 } __attribute__((packed)) CH; // 29 B
 // getsize(CH)
 
@@ -205,9 +212,5 @@ typedef struct {
 typedef struct {
   char name[10];
 } __attribute__((packed)) Scanlist;
-
-extern const uint16_t StepFrequencyTable[12];
-extern const char *modulationTypeOptions[6];
-extern const SquelchType sqTypeValues[4];
 
 #endif /* end of include guard: GLOBALS_H */

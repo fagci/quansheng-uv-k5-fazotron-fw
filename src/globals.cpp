@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "globals.hpp"
 
 const SquelchType sqTypeValues[4] = {
     SQUELCH_RSSI_NOISE_GLITCH,

@@ -18,17 +18,6 @@
 #define BK4819_REGS_H
 
 #include <stdint.h>
-typedef struct RegisterSpec {
-  const char *name;
-  uint8_t num;
-  uint8_t offset;
-  uint16_t mask;
-  uint16_t inc;
-} RegisterSpec;
-
-static const RegisterSpec afcDisableRegSpec = {"AFC Disable", 0x73, 4, 1, 1};
-static const RegisterSpec afOutRegSpec = {"AF Output Select", 0x47, 8, 0xF, 1};
-static const RegisterSpec afDacGainRegSpec = {"AF DAC Gain", 0x48, 0, 0xF, 1};
 
 enum BK4819_REGISTER_t {
   BK4819_REG_00 = 0x00U,
@@ -65,6 +54,7 @@ enum BK4819_REGISTER_t {
   BK4819_REG_3A = 0x3AU,
   BK4819_REG_3B = 0x3BU,
   BK4819_REG_3C = 0x3CU,
+  BK4819_REG_3D = 0x3DU,
   BK4819_REG_3E = 0x3EU,
   BK4819_REG_3F = 0x3FU,
   BK4819_REG_40 = 0x40U,
@@ -87,6 +77,7 @@ enum BK4819_REGISTER_t {
   BK4819_REG_5D = 0x5DU,
   BK4819_REG_5E = 0x5EU,
   BK4819_REG_5F = 0x5FU,
+  BK4819_REG_61 = 0x61U,
   BK4819_REG_63 = 0x63U,
   BK4819_REG_64 = 0x64U,
   BK4819_REG_65 = 0x65U,
@@ -98,6 +89,8 @@ enum BK4819_REGISTER_t {
   BK4819_REG_70 = 0x70U,
   BK4819_REG_71 = 0x71U,
   BK4819_REG_72 = 0x72U,
+  BK4819_REG_73 = 0x73U,
+  BK4819_REG_77 = 0x77U,
   BK4819_REG_78 = 0x78U,
   BK4819_REG_79 = 0x79U,
   BK4819_REG_7A = 0x7AU,
@@ -419,5 +412,20 @@ enum {
   BK4819_REG_70_ENABLE_TONE1 = (1U << BK4819_REG_70_SHIFT_ENABLE_TONE1),
   BK4819_REG_70_ENABLE_TONE2 = (1U << BK4819_REG_70_SHIFT_ENABLE_TONE2),
 };
+
+typedef struct RegisterSpec {
+  const char *name;
+  BK4819_REGISTER_t num;
+  uint8_t offset;
+  uint16_t mask;
+  uint16_t inc;
+} RegisterSpec;
+
+static const RegisterSpec afcDisableRegSpec = {"AFC Disable", BK4819_REG_73, 4,
+                                               1, 1};
+static const RegisterSpec afOutRegSpec = {"AF Output Select", BK4819_REG_47, 8,
+                                          0xF, 1};
+static const RegisterSpec afDacGainRegSpec = {"AF DAC Gain", BK4819_REG_48, 0,
+                                              0xF, 1};
 
 #endif
