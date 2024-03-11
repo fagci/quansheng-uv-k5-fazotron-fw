@@ -9,7 +9,7 @@
 #include "system.hpp"
 #include <stdint.h>
 
-class BK1080 : AbstractRadio {
+class BK1080 : public AbstractRadio {
 public:
   typedef enum {
     BK1080_BAND_87_5_108,
@@ -23,6 +23,13 @@ public:
     BK1080_CHSP_100,
     BK1080_CHSP_50,
   } BK1080_ChannelSpacing;
+
+  uint32_t getF() {}
+
+  uint8_t getNoise() { return 0; }
+  uint8_t getGlitch() { return 0; }
+  uint8_t getSNR() { return 0; }
+  bool isSquelchOpen() { return true; }
 
   void init() {
     for (uint8_t i = 0; i < ARRAY_SIZE(BK1080_RegisterTable); i++) {

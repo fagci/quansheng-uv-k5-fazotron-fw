@@ -2,14 +2,12 @@
 
 #include "driver/adc.hpp"
 #include "driver/backlight.hpp"
-#include "driver/bk1080.hpp"
-#include "driver/bk4819-regs.hpp"
-#include "driver/bk4819.hpp"
 #include "driver/st7565.hpp"
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
+#include "radio.hpp"
 #include <stdint.h>
 #include <string.h>
 
@@ -25,8 +23,7 @@ public:
     FILTER_OFF,
   } Filter;
 
-  BK4819 bk4819;
-  BK1080 bk1080;
+  Radio radio;
   ST7565 display;
   Backlight backlight;
 
@@ -36,9 +33,7 @@ public:
     initAdc();
 
     display.init();
-    bk1080.init();
-    bk4819.init();
-
+    radio.init();
     backlight.init();
   }
 

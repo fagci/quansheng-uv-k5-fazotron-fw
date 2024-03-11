@@ -74,7 +74,7 @@ const Gain gainTable[19] = {
     {0x3E0, 0},   //
 };
 
-class BK4819 : AbstractRadio {
+class BK4819 : public AbstractRadio {
 
 public:
   static constexpr uint32_t F_MIN = 1600000;
