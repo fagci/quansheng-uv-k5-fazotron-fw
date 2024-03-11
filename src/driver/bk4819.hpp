@@ -9,9 +9,6 @@
 #include "system.hpp"
 #include <stdint.h>
 
-#define F_MIN 0
-#define F_MAX 130000000
-
 typedef enum {
   F_SC_T_0_2s,
   F_SC_T_0_4s,

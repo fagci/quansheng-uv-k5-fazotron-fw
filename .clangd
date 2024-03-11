@@ -1,7 +1,5 @@
 CompileFlags:
   Add: [-std=c++20,
-        -MMD,
-        -Os,
         -Wall,
         -Werror=deprecated-non-prototype,
         -Werror=implicit-function-declaration,
@@ -9,14 +7,7 @@ CompileFlags:
         -Werror=return-type,
         -Werror=strict-prototypes,
         -Wextra,
-        -Wimplicit-fallthrough,
-        -Wno-error,
         -Wpedantic,
-        -flto=auto,
-        -fno-builtin,
-        -fno-delete-null-pointer-checks,
-        -fshort-enums,
-        -fstack-protector-strong,
         -mcpu=cortex-m0
       ]
   Compiler: arm-none-eabi-g++

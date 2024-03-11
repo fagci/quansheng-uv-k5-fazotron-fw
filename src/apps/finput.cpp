@@ -1,11 +1,11 @@
 #include "finput.hpp"
-#include "../driver/bk4819.hpp"
-#include "../driver/st7565.hpp"
-#include "../radio.hpp"
 #include "../scheduler.hpp"
 #include "../ui/graphics.hpp"
 #include "apps.hpp"
 #include <string.h>
+
+#define F_MIN 0
+#define F_MAX 130000000
 
 uint32_t gFInputTempFreq;
 void (*gFInputCallback)(uint32_t f);
@@ -189,7 +189,6 @@ void FINPUT_render() {
     }
   }
 }
-
 
 static App meta = {
     .id = APP_FINPUT,

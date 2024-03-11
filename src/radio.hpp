@@ -69,8 +69,9 @@ public:
     uint8_t codeTypeTX : 4;
     SquelchSettings sq;
     uint8_t gainIndex : 5;
+
     uint32_t getStep() { return StepFrequencyTable[step]; }
-  } VFO;
+  } __attribute__((packed)) VFO;
 
   VFO vfo;
 
@@ -81,7 +82,7 @@ public:
     mainRadio = &bk4819;
   }
 
-  void setF(uint32_t f) { mainvfo.setF(f); }
+  void setF(uint32_t f) { mainRadio->setF(f); }
 
   uint8_t getBandIndex(uint32_t f) {
     for (uint8_t i = 0; i < ARRAY_SIZE(STOCK_BANDS); ++i) {
@@ -286,7 +287,7 @@ public:
     }
 
     uint8_t power = 0;
-    uint32_t txF = getTXFEx(radio);
+    uint32_t txF = getTXFEx(&vfo);
 
     if (on) {
       gTxState = getTXState(txF);
@@ -324,7 +325,7 @@ public:
       bk4819.toggleGpioOut(BK4819_GPIO0_PIN28_RX_ENABLE, true);
 
       tuneToPure(vfo.f, true);
-      bk4819.rX_TurnOn();
+      bk4819.rxEnable();
     }
 
     bk4819.toggleGpioOut(BK4819_GPIO5_PIN1_RED, on);

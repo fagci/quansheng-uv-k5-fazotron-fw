@@ -1,14 +1,11 @@
 #include "measurements.hpp"
 #include <stdint.h>
-
-long long Clamp(long long v, long long min, long long max) {
-  return v <= min ? min : (v >= max ? max : v);
-}
+#include <algorithm>
 
 int ConvertDomain(int aValue, int aMin, int aMax, int bMin, int bMax) {
   const int aRange = aMax - aMin;
   const int bRange = bMax - bMin;
-  aValue = Clamp(aValue, aMin, aMax);
+  aValue = std::clamp(aValue, aMin, aMax);
   return ((aValue - aMin) * bRange + aRange / 2) / aRange + bMin;
 }
 
