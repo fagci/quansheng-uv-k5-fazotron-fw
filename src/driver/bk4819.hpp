@@ -9,66 +9,8 @@
 #include "system.hpp"
 #include <stdint.h>
 
-#define VHF_UHF_BOUND1 24000000
-#define VHF_UHF_BOUND2 28000000
-
-#define BK4819_F_MIN 1600000
-#define BK4819_F_MAX 134000000
-
 #define F_MIN 0
 #define F_MAX 130000000
-
-typedef enum {
-  FILTER_VHF,
-  FILTER_UHF,
-  FILTER_OFF,
-} Filter;
-
-enum BK4819_AF_Type_t {
-  BK4819_AF_MUTE,
-  BK4819_AF_FM,
-  BK4819_AF_ALAM, // tone
-  BK4819_AF_BEEP, // for tx
-  BK4819_AF_RAW,  // (ssb without if filter = raw in sdr sharp)
-  BK4819_AF_USB,  // (or ssb = lsb and usb at the same time)
-  BK4819_AF_CTCO, // ctcss/dcs (fm with narrow filters for ctcss/dcs)
-  BK4819_AF_AM,
-  BK4819_AF_FSKO, // fsk out test with special fsk filters (need reg58 fsk on to
-                  // give sound on speaker )
-  BK4819_AF_BYPASS, // (fm without filter = discriminator output)
-};
-
-typedef enum {
-  MOD_FM,
-  MOD_AM,
-  MOD_USB,
-  MOD_BYP,
-  MOD_RAW,
-  MOD_WFM,
-} ModulationType;
-
-typedef enum {
-  SQUELCH_RSSI_NOISE_GLITCH,
-  SQUELCH_RSSI_GLITCH,
-  SQUELCH_RSSI_NOISE,
-  SQUELCH_RSSI,
-} SquelchType;
-
-typedef enum BK4819_AF_Type_t BK4819_AF_Type_t;
-
-enum BK4819_FilterBandwidth_t {
-  BK4819_FILTER_BW_WIDE,
-  BK4819_FILTER_BW_NARROW,
-  BK4819_FILTER_BW_NARROWER,
-};
-
-typedef enum BK4819_FilterBandwidth_t BK4819_FilterBandwidth_t;
-
-enum BK4819_CssScanResult_t {
-  BK4819_CSS_RESULT_NOT_FOUND,
-  BK4819_CSS_RESULT_CTCSS,
-  BK4819_CSS_RESULT_CDCSS,
-};
 
 typedef enum {
   F_SC_T_0_2s,
@@ -81,8 +23,6 @@ typedef struct {
   uint16_t regValue;
   int8_t gainDb;
 } Gain;
-
-typedef enum BK4819_CssScanResult_t BK4819_CssScanResult_t;
 
 static const uint16_t FSK_RogerTable[7] = {
     0xF1A2, 0x7446, 0x61A4, 0x6544, 0x4E8A, 0xE044, 0xEA84,
@@ -135,11 +75,53 @@ const Gain gainTable[19] = {
 };
 
 class BK4819 : AbstractRadio {
-  static uint16_t gBK4819_GpioOutState;
-  static Filter selectedFilter = FILTER_OFF;
-  static uint8_t modTypeCurrent = 255;
 
 public:
+  static constexpr uint32_t F_MIN = 1600000;
+  static constexpr uint32_t F_MAX = 134000000;
+
+  typedef enum {
+    MOD_FM,
+    MOD_AM,
+    MOD_USB,
+    MOD_BYP,
+    MOD_RAW,
+    MOD_WFM,
+  } ModulationType;
+
+  typedef enum {
+    SQUELCH_RSSI_NOISE_GLITCH,
+    SQUELCH_RSSI_GLITCH,
+    SQUELCH_RSSI_NOISE,
+    SQUELCH_RSSI,
+  } SquelchType;
+
+  typedef enum AF_Type_t {
+    AF_MUTE,
+    AF_FM,
+    AF_ALAM, // tone
+    AF_BEEP, // for tx
+    AF_RAW,  // (ssb without if filter = raw in sdr sharp)
+    AF_USB,  // (or ssb = lsb and usb at the same time)
+    AF_CTCO, // ctcss/dcs (fm with narrow filters for ctcss/dcs)
+    AF_AM,
+    AF_FSKO,   // fsk out test with special fsk filters, reg58 fsk on to give
+               // sound on speaker
+    AF_BYPASS, // (fm without filter = discriminator output)
+  } AF_Type_t;
+
+  typedef enum FilterBandwidth_t {
+    FILTER_BW_WIDE,
+    FILTER_BW_NARROW,
+    FILTER_BW_NARROWER,
+  } FilterBandwidth_t;
+
+  typedef enum CssScanResult_t {
+    CSS_RESULT_NOT_FOUND,
+    CSS_RESULT_CTCSS,
+    CSS_RESULT_CDCSS,
+  } CssScanResult_t;
+
   void init() {
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
@@ -283,30 +265,13 @@ public:
     writeRegister(BK4819_REG_31, REG_31_Value | 4); // bit 2 - VOX Enable
   }
 
-  void setFilterBandwidth(BK4819_FilterBandwidth_t Bandwidth) {
-    /* if (readRegister(BK4819_REG_43) !=
-        BWRegValues[Bandwidth]) { // TODO: maybe slow */
+  void setFilterBandwidth(FilterBandwidth_t Bandwidth) {
     writeRegister(BK4819_REG_43, BWRegValues[Bandwidth]);
-    // }
   }
 
-  void setupPowerAmplifier(uint16_t Bias, uint32_t Frequency) {
-    uint8_t Gain;
-
-    if (Bias > 255) {
-      Bias = 255;
-    }
-    if (Frequency < VHF_UHF_BOUND2) {
-      // Gain 1 = 1
-      // Gain 2 = 0
-      Gain = 0x08U;
-    } else {
-      // Gain 1 = 4
-      // Gain 2 = 2
-      Gain = 0x22U;
-    }
-    // Enable PACTLoutput
-    writeRegister(BK4819_REG_36, (Bias << 8) | 0x80U | Gain);
+  void setupPowerAmplifier(uint8_t bias, uint32_t f) {
+    const uint8_t gain = f < 28000000 ? 0x08U : 0x22U;
+    writeRegister(BK4819_REG_36, (bias << 8) | 0x80U | gain);
   }
 
   void setFrequency(uint32_t f) {
@@ -337,7 +302,7 @@ public:
                   (SquelchCloseNoiseThresh << 8) | SquelchOpenNoiseThresh);
     writeRegister(BK4819_REG_78,
                   (SquelchOpenRSSIThresh << 8) | SquelchCloseRSSIThresh);
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     rX_TurnOn();
 
     // NOTE: check if it works to prevent muting output
@@ -357,9 +322,7 @@ public:
     setRegValue(sqType, squelchTypeValues[t]);
   }
 
-  void setAF(BK4819_AF_Type_t AF) {
-    writeRegister(BK4819_REG_47, 0x6040 | (AF << 8));
-  }
+  void setAF(AF_Type_t AF) { writeRegister(BK4819_REG_47, 0x6040 | (AF << 8)); }
 
   uint16_t getRegValue(RegisterSpec s) {
     return (readRegister(s.num) >> s.offset) & s.mask;
@@ -376,9 +339,8 @@ public:
       return;
     }
     modTypeCurrent = type;
-    const BK4819_AF_Type_t modTypeReg47Values[] = {
-        BK4819_AF_FM,     BK4819_AF_AM,  BK4819_AF_USB,
-        BK4819_AF_BYPASS, BK4819_AF_RAW, BK4819_AF_FM,
+    const AF_Type_t modTypeReg47Values[] = {
+        AF_FM, AF_AM, AF_USB, AF_BYPASS, AF_RAW, AF_FM,
     };
     setAF(modTypeReg47Values[type]);
     setRegValue(afDacGainRegSpec, 0xF);
@@ -423,16 +385,6 @@ public:
     toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA, false);
   }
 
-  void selectFilter(Filter filterNeeded) {
-    if (selectedFilter == filterNeeded) {
-      return;
-    }
-
-    selectedFilter = filterNeeded;
-    toggleGpioOut(BK4819_GPIO4_PIN32_VHF_LNA, filterNeeded == FILTER_VHF);
-    toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA, filterNeeded == FILTER_UHF);
-  }
-
   void disableScramble() {
     uint16_t Value;
 
@@ -471,7 +423,7 @@ public:
     uint16_t ToneConfig;
 
     enterTxMute();
-    setAF(BK4819_AF_BEEP);
+    setAF(AF_BEEP);
 
     if (bTuningGainSwitch == 0) {
       ToneConfig = 0 | BK4819_REG_70_ENABLE_TONE1 |
@@ -501,7 +453,7 @@ public:
 
   void turnsOffTones_TurnsOnRX() {
     writeRegister(BK4819_REG_70, 0);
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     exitTxMute();
     writeRegister(BK4819_REG_30, 0);
     writeRegister(
@@ -514,7 +466,7 @@ public:
   void idle() { writeRegister(BK4819_REG_30, 0x0000); }
 
   void exitBypass() {
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     writeRegister(BK4819_REG_7E, 0x302E);
   }
 
@@ -542,9 +494,9 @@ public:
     enableDTMF();
     enterTxMute();
     if (bLocalLoopback) {
-      setAF(BK4819_AF_BEEP);
+      setAF(AF_BEEP);
     } else {
-      setAF(BK4819_AF_MUTE);
+      setAF(AF_MUTE);
     }
     writeRegister(BK4819_REG_70,
                   0 | BK4819_REG_70_MASK_ENABLE_TONE1 |
@@ -557,7 +509,7 @@ public:
 
   void exitDTMF_TX(bool bKeep) {
     enterTxMute();
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     writeRegister(BK4819_REG_70, 0x0000);
     disableDTMF();
     writeRegister(BK4819_REG_30, 0xC1FE);
@@ -675,7 +627,7 @@ public:
                       (96U << BK4819_REG_70_SHIFT_TONE1_TUNING_GAIN));
     setToneFrequency(Frequency);
 
-    setAF(bLocalLoopback ? BK4819_AF_BEEP : BK4819_AF_MUTE);
+    setAF(bLocalLoopback ? AF_BEEP : AF_MUTE);
 
     enableTXLink();
     SYSTEM_DelayMs(50);
@@ -713,25 +665,25 @@ public:
     writeRegister(BK4819_REG_51, 0x904A);
   }
 
-  BK4819_CssScanResult_t getCxCSSScanResult(uint32_t *pCdcssFreq,
-                                            uint16_t *pCtcssFreq) {
+  CssScanResult_t getCxCSSScanResult(uint32_t *pCdcssFreq,
+                                     uint16_t *pCtcssFreq) {
     uint16_t Low;
     uint16_t High = readRegister(BK4819_REG_69);
 
     if ((High & 0x8000) == 0) {
       Low = readRegister(BK4819_REG_6A);
       *pCdcssFreq = ((High & 0xFFF) << 12) | (Low & 0xFFF);
-      return BK4819_CSS_RESULT_CDCSS;
+      return CSS_RESULT_CDCSS;
     }
 
     Low = readRegister(BK4819_REG_68);
 
     if ((Low & 0x8000) == 0) {
       *pCtcssFreq = ((Low & 0x1FFF) * 4843) / 10000;
-      return BK4819_CSS_RESULT_CTCSS;
+      return CSS_RESULT_CTCSS;
     }
 
-    return BK4819_CSS_RESULT_NOT_FOUND;
+    return CSS_RESULT_NOT_FOUND;
   }
 
   uint8_t getDTMF_5TONE_Code() {
@@ -744,7 +696,7 @@ public:
 
   void playRoger() {
     enterTxMute();
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     writeRegister(BK4819_REG_70, 0xE000);
     enableTXLink();
     SYSTEM_DelayMs(50);
@@ -763,7 +715,7 @@ public:
   void playRogerMDC() {
     uint8_t i;
 
-    setAF(BK4819_AF_MUTE);
+    setAF(AF_MUTE);
     writeRegister(
         BK4819_REG_58,
         0x37C3); // FSK Enable, RX Bandwidth FFSK1200/1800, 0xAA or 0x55
@@ -808,7 +760,7 @@ public:
   void playDTMFEx(bool bLocalLoopback, char Code) {
     enableDTMF();
     enterTxMute();
-    setAF(bLocalLoopback ? BK4819_AF_BEEP : BK4819_AF_MUTE);
+    setAF(bLocalLoopback ? AF_BEEP : AF_MUTE);
     writeRegister(BK4819_REG_70, 0xD3D3);
     enableTXLink();
     SYSTEM_DelayMs(50);
@@ -1028,4 +980,7 @@ private:
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
   }
+
+  uint16_t gBK4819_GpioOutState;
+  uint8_t modTypeCurrent = 255;
 };

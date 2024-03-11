@@ -19,6 +19,15 @@
 
 #include <stdint.h>
 
+#define VHF_UHF_BOUND1 24000000
+#define VHF_UHF_BOUND2 28000000
+
+typedef enum {
+  FILTER_VHF,
+  FILTER_UHF,
+  FILTER_OFF,
+} Filter;
+
 void BOARD_FLASH_Init();
 void BOARD_GPIO_Init();
 void BOARD_PORTCON_Init();
@@ -30,4 +39,3 @@ void BOARD_EEPROM_LoadCalibration();
 void BOARD_FactoryReset(bool bIsAll);
 
 #endif
-

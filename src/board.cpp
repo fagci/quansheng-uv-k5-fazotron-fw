@@ -33,6 +33,19 @@
 #include "misc.hpp"
 #include <string.h>
 
+static Filter selectedFilter = FILTER_OFF;
+
+void selectFilter(Filter filterNeeded) {
+  if (selectedFilter == filterNeeded) {
+    return;
+  }
+
+  selectedFilter = filterNeeded;
+  // BK4819
+  toggleGpioOut(BK4819_GPIO4_PIN32_VHF_LNA, filterNeeded == FILTER_VHF);
+  toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA, filterNeeded == FILTER_UHF);
+}
+
 void BOARD_GPIO_Init() {
   GPIOA->DIR |= 0
                 // A7 = UART1 TX default as OUTPUT from bootloader!
