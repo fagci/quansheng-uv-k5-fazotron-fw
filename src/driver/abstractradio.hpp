@@ -19,6 +19,7 @@ public:
   virtual uint8_t getNoise() = 0;
   virtual uint8_t getGlitch() = 0;
   virtual uint8_t getSNR() = 0;
+  virtual bool isSquelchOpen() = 0;
 
   virtual void idle() = 0;
 };
