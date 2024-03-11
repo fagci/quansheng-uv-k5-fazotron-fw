@@ -350,11 +350,8 @@ public:
   }
 
   void toggleModulation() {
-    if (vfo.modulation == MOD_WFM) {
-      vfo.modulation = MOD_FM;
-    } else {
-      ++vfo.modulation;
-    }
+    vfo.modulation = IncDec<uint8_t, ModulationType>(
+        vfo.modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
     if (vfo.modulation == MOD_WFM) {
       if (isBK1080Range(vfo.f)) {
         toggleBK1080(true);
@@ -368,9 +365,8 @@ public:
   }
 
   void updateStep(bool inc) {
-    uint8_t step = vfo.step;
-    IncDec<uint8_t>(&step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
-    vfo.step = step;
+    vfo.step = IncDec<uint8_t, Step>(
+        vfo.step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
     onVfoUpdate();
   }
 
