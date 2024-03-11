@@ -9,7 +9,7 @@ static const uint8_t rssi2s[2][15] = {
     {141, 135, 129, 123, 117, 111, 105, 99, 93, 83, 73, 63, 53, 43, 33},
 };
 
-long long Clamp(long long v, long long min, long long max);
+template <class T> T Clamp(T v, T min, T max);
 int ConvertDomain(int aValue, int aMin, int aMax, int bMin, int bMax);
 uint8_t Rssi2PX(uint16_t rssi, uint8_t pxMin, uint8_t pxMax);
 uint8_t DBm2S(int dbm, bool isVHF);
@@ -25,19 +25,7 @@ void IncDec16(uint16_t *val, uint16_t min, uint16_t max, int16_t inc);
 void IncDecI16(int16_t *val, int16_t min, int16_t max, int16_t inc);
 void IncDecI32(int32_t *val, int32_t min, int32_t max, int32_t inc);
 void IncDec32(uint32_t *val, uint32_t min, uint32_t max, int32_t inc);
+template <class T> constexpr T IncDec(T *val, T min, T max, T inc);
 bool IsReadable(char *name);
-
-#define INC_DEC(val, min, max, inc)                                            \
-  do {                                                                         \
-    if (inc > 0) {                                                             \
-      val = ((((val - min) + inc) % (max - min + 1)) + (max - min + 1)) %      \
-                (max - min + 1) +                                              \
-            min;                                                               \
-    } else if (inc < 0) {                                                      \
-      val = ((((val - min) + inc) % (max - min + 1)) + (max - min + 1)) %      \
-                (max - min + 1) +                                              \
-            min;                                                               \
-    }                                                                          \
-  } while (0)
 
 #endif /* end of include guard: MEASUREMENTS_H */

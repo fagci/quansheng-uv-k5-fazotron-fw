@@ -1,11 +1,14 @@
 #include "measurements.hpp"
 #include <stdint.h>
-#include <algorithm>
+
+template <class T> T Clamp(T v, T min, T max) {
+  return v <= min ? min : (v >= max ? max : v);
+}
 
 int ConvertDomain(int aValue, int aMin, int aMax, int bMin, int bMax) {
   const int aRange = aMax - aMin;
   const int bRange = bMax - bMin;
-  aValue = std::clamp(aValue, aMin, aMax);
+  aValue = Clamp(aValue, aMin, aMax);
   return ((aValue - aMin) * bRange + aRange / 2) / aRange + bMin;
 }
 
@@ -133,3 +136,9 @@ void IncDec32(uint32_t *val, uint32_t min, uint32_t max, int32_t inc) {
 }
 
 bool IsReadable(char *name) { return name[0] >= 32 && name[0] < 127; }
+
+template <class T> constexpr T IncDec(T *val, T min, T max, T inc) {
+  T mma = max - min + 1;
+  T vmi = (*val - min) + inc;
+  *val = ((vmi % mma) + mma) % mma + min;
+}

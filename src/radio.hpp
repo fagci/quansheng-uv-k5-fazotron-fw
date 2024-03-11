@@ -16,6 +16,7 @@
 #include "helpers/lootlist.hpp"
 #include <stdint.h>
 // #include "helper/msghelper.hpp"
+#include "helpers/measurements.hpp"
 #include "inc/dp32g030/gpio.hpp"
 #include "misc.hpp"
 #include "scheduler.hpp"
@@ -367,9 +368,9 @@ public:
   }
 
   void updateStep(bool inc) {
-    uint8_t step = vfo.vfo.step;
-    IncDec8(&step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
-    vfo.vfo.step = step;
+    uint8_t step = vfo.step;
+    IncDec<uint8_t>(&step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
+    vfo.step = step;
     onVfoUpdate();
   }
 
