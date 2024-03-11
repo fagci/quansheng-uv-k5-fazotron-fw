@@ -80,22 +80,6 @@ public:
   static constexpr uint32_t F_MIN = 1600000;
   static constexpr uint32_t F_MAX = 134000000;
 
-  typedef enum {
-    MOD_FM,
-    MOD_AM,
-    MOD_USB,
-    MOD_BYP,
-    MOD_RAW,
-    MOD_WFM,
-  } ModulationType;
-
-  typedef enum {
-    SQUELCH_RSSI_NOISE_GLITCH,
-    SQUELCH_RSSI_GLITCH,
-    SQUELCH_RSSI_NOISE,
-    SQUELCH_RSSI,
-  } SquelchType;
-
   typedef enum AF_Type_t {
     AF_MUTE,
     AF_FM,
@@ -109,12 +93,6 @@ public:
                // sound on speaker
     AF_BYPASS, // (fm without filter = discriminator output)
   } AF_Type_t;
-
-  typedef enum FilterBandwidth_t {
-    FILTER_BW_WIDE,
-    FILTER_BW_NARROW,
-    FILTER_BW_NARROWER,
-  } FilterBandwidth_t;
 
   typedef enum CssScanResult_t {
     CSS_RESULT_NOT_FOUND,
@@ -145,6 +123,44 @@ public:
     gBK4819_GpioOutState = 0x9000;
     writeRegister(BK4819_REG_33, 0x9000);
     writeRegister(BK4819_REG_3F, 0);
+
+    setupRegisters();
+  }
+
+  void setupRegisters() {
+    toggleGpioOut(BK4819_GPIO0_PIN28_GREEN, false);
+    toggleGpioOut(BK4819_GPIO5_PIN1_RED, false);
+    toggleGpioOut(BK4819_GPIO1_PIN29_PA_ENABLE, false);
+
+    setFilterBandwidth(FILTER_BW_WIDE);
+
+    setupPowerAmplifier(0, 0);
+
+    while (readRegister(BK4819_REG_0C) & 1U) {
+      writeRegister(BK4819_REG_02, 0);
+      SYSTEM_DelayMs(1);
+    }
+    writeRegister(BK4819_REG_3F, 0);
+    writeRegister(BK4819_REG_7D, 0xE94F);
+    setF(0);
+    toggleGpioOut(BK4819_GPIO0_PIN28_RX_ENABLE, true);
+    writeRegister(
+        BK4819_REG_48,
+        (11u << 12) |    // ??? .. 0 ~ 15, doesn't seem to make any difference
+            (1u << 10) | // AF Rx Gain-1
+            (56 << 4) |  // AF Rx Gain-2
+            (8 << 0));   // AF DAC Gain (after Gain-1 and Gain-2)
+
+    disableScramble();
+
+    disableVox();
+    disableDTMF();
+
+    writeRegister(BK4819_REG_3F, 0);
+    writeRegister(BK4819_REG_40,
+                  (readRegister(BK4819_REG_40) & ~(0b11111111111)) |
+                      0b10110101010 | (1 << 12));
+    // writeRegister(0x40, (1 << 12) | (1450));
   }
 
   void setF(uint32_t f) {
@@ -233,7 +249,7 @@ public:
     writeRegister(BK4819_REG_31, REG_31_Value | 4); // bit 2 - VOX Enable
   }
 
-  void setFilterBandwidth(FilterBandwidth_t Bandwidth) {
+  void setFilterBandwidth(FilterBandwidth Bandwidth) {
     writeRegister(BK4819_REG_43, BWRegValues[Bandwidth]);
   }
 
