@@ -166,6 +166,17 @@ public:
 
   bool isSquelchOpen() { return (readRegister(BK4819_REG_0C) >> 1) & 1; }
 
+  void rxEnable() {
+    writeRegister(BK4819_REG_37, 0x1F0F);
+    writeRegister(BK4819_REG_30, 0);
+    writeRegister(BK4819_REG_30, 0xBFF1);
+  }
+
+  void mute(bool mute) {
+    toggleAFDAC(!mute);
+    toggleAFBit(!mute);
+  }
+
   void getVoxAmp(uint16_t *pResult) {
     *pResult = readRegister(BK4819_REG_64) & 0x7FFF;
   }
@@ -251,7 +262,7 @@ public:
     writeRegister(BK4819_REG_78,
                   (SquelchOpenRSSIThresh << 8) | SquelchCloseRSSIThresh);
     setAF(AF_MUTE);
-    rX_TurnOn();
+    rxEnable();
 
     // NOTE: check if it works to prevent muting output
     // setAF(modTypeCurrent);
@@ -286,12 +297,6 @@ public:
     writeRegister(BK4819_REG_3D, type == MOD_USB ? 0 : 0x2AAB);
     setRegValue(afcDisableRegSpec,
                 type == MOD_AM || type == MOD_USB || type == MOD_BYP);
-  }
-
-  void rX_TurnOn() {
-    writeRegister(BK4819_REG_37, 0x1F0F);
-    writeRegister(BK4819_REG_30, 0);
-    writeRegister(BK4819_REG_30, 0xBFF1);
   }
 
   void disableFilter() {
@@ -374,7 +379,7 @@ public:
 
   void enableRX() {
     toggleGpioOut(BK4819_GPIO0_PIN28_RX_ENABLE, true);
-    rX_TurnOn();
+    rxEnable();
   }
 
   void enableTXLink() {
@@ -818,7 +823,7 @@ public:
             BK4819_REG_51_CDCSS_23_BIT | BK4819_REG_51_1050HZ_NO_DETECTION |
             BK4819_REG_51_AUTO_CDCSS_BW_DISABLE |
             BK4819_REG_51_AUTO_CTCSS_BW_DISABLE);
-    rX_TurnOn();
+    rxEnable();
   }
 
   void stopScan() {

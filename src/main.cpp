@@ -3,10 +3,11 @@
 #include "driver/system.hpp"
 
 extern "C" int Main(void) {
+  Board board;
   SYSTICK_Init();
   SYSTEM_ConfigureSysCon();
 
-  BOARD_Init();
-  BACKLIGHT_Toggle(true);
+  board.init();
+  board.backlight.on();
   return 0;
 }

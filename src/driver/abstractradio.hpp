@@ -22,4 +22,6 @@ public:
   virtual bool isSquelchOpen() = 0;
 
   virtual void idle() = 0;
+  virtual void rxEnable() = 0;
+  virtual void mute(bool) = 0;
 };

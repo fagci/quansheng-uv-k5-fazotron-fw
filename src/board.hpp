@@ -19,15 +19,28 @@
 class Board {
 
 public:
-  BK4819 bk4819;
-
   typedef enum {
     FILTER_VHF,
     FILTER_UHF,
     FILTER_OFF,
   } Filter;
 
-  Filter selectedFilter = FILTER_OFF;
+  BK4819 bk4819;
+  BK1080 bk1080;
+  ST7565 display;
+  Backlight backlight;
+
+  void init() {
+    initPortcon();
+    initGpio();
+    initAdc();
+
+    display.init();
+    bk1080.init();
+    bk4819.init();
+
+    backlight.init();
+  }
 
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
@@ -35,21 +48,10 @@ public:
     }
 
     selectedFilter = filterNeeded;
-    // BK4819
     bk4819.toggleGpioOut(BK4819_GPIO4_PIN32_VHF_LNA,
                          filterNeeded == FILTER_VHF);
     bk4819.toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA,
                          filterNeeded == FILTER_UHF);
-  }
-
-  void init() {
-    initPortcon();
-    initGpio();
-    initAdc();
-    ST7565_Init(6);
-    BK1080_Init(0, false);
-    bk4819.init();
-    BACKLIGHT_Init();
   }
 
   void getBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent) {
@@ -62,6 +64,8 @@ public:
   }
 
 private:
+  Filter selectedFilter = FILTER_OFF;
+
   void initGpio() {
     GPIOA->DIR |= 0
                   // A7 = UART1 TX default as OUTPUT from bootloader!

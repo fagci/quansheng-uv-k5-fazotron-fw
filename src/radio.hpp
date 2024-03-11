@@ -25,7 +25,6 @@
 #include "settings.hpp"
 #include <string.h>
 
-
 class Radio {
   CH *radio;
   uint8_t gCurrentVfo;
@@ -56,15 +55,13 @@ class Radio {
 
   static void toggleBK4819(bool on) {
     if (on) {
-      BK4819_ToggleAFDAC(true);
-      BK4819_ToggleAFBit(true);
+      bk4819.mute(false);
       SYSTEM_DelayMs(10);
       AUDIO_ToggleSpeaker(true);
     } else {
       AUDIO_ToggleSpeaker(false);
       SYSTEM_DelayMs(10);
-      BK4819_ToggleAFDAC(false);
-      BK4819_ToggleAFBit(false);
+      bk4819.mute(true);
     }
   }
 
