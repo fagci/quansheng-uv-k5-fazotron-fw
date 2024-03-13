@@ -25,6 +25,9 @@
 
 class Radio : AbstractRadio {
 public:
+  constexpr static uint32_t VHF_UHF_BOUND1 = 24000000;
+  constexpr static uint32_t VHF_UHF_BOUND2 = 28000000;
+
   typedef enum {
     SCAN_TO_0,
     SCAN_TO_500ms,
@@ -38,6 +41,12 @@ public:
     SCAN_TO_5min,
     SCAN_TO_NONE,
   } ScanTimeout;
+
+  typedef enum {
+    FILTER_VHF,
+    FILTER_UHF,
+    FILTER_OFF,
+  } Filter;
 
   typedef struct {
     uint8_t timeout : 8;
@@ -90,6 +99,18 @@ public:
     if (mainRadio == &bk4819) {
       bk4819.resetRSSI();
     }
+  }
+
+  void selectFilter(Filter filterNeeded) {
+    if (selectedFilter == filterNeeded) {
+      return;
+    }
+
+    selectedFilter = filterNeeded;
+    bk4819.toggleGpioOut(BK4819_GPIO4_PIN32_VHF_LNA,
+                         filterNeeded == FILTER_VHF);
+    bk4819.toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA,
+                         filterNeeded == FILTER_UHF);
   }
 
   uint8_t getBandIndex(uint32_t f) {
@@ -657,4 +678,5 @@ private:
   bool gIsBK1080 = false;
 
   TXState gTxState = TX_UNKNOWN;
+  Filter selectedFilter = FILTER_OFF;
 };

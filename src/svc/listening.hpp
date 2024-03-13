@@ -8,28 +8,17 @@ class ListenService {
 public:
   ListenService(Radio *r) : radio{r} {}
 
-  void init() {
-    if (!listenFn) {
-      setListenFunction(radio->updateMeasurements);
-    }
-    radio->rxEnable();
-  }
+  void init() { radio->rxEnable(); }
 
   void update() {
-    listenFn();
+    radio->updateMeasurements();
     if (radio->vfo.scan.timeout < 10) {
       radio->resetRSSI();
     }
   }
 
-  void deinit() {
-    listenFn = nullptr;
-    radio->idle();
-  }
-
-  void setListenFunction(ListenFn fn) { listenFn = fn; }
+  void deinit() { radio->idle(); }
 
 private:
   Radio *radio;
-  ListenFn listenFn = nullptr;
 };

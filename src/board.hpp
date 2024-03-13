@@ -11,18 +11,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#define VHF_UHF_BOUND1 24000000
-#define VHF_UHF_BOUND2 28000000
-
 class Board {
 
 public:
-  typedef enum {
-    FILTER_VHF,
-    FILTER_UHF,
-    FILTER_OFF,
-  } Filter;
-
   Radio radio;
   ST7565 display;
 
@@ -35,18 +26,6 @@ public:
     radio.init();
   }
 
-  void selectFilter(Filter filterNeeded) {
-    if (selectedFilter == filterNeeded) {
-      return;
-    }
-
-    selectedFilter = filterNeeded;
-    bk4819.toggleGpioOut(BK4819_GPIO4_PIN32_VHF_LNA,
-                         filterNeeded == FILTER_VHF);
-    bk4819.toggleGpioOut(BK4819_GPIO3_PIN31_UHF_LNA,
-                         filterNeeded == FILTER_UHF);
-  }
-
   void getBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent) {
     ADC_Start();
 
@@ -57,8 +36,6 @@ public:
   }
 
 private:
-  Filter selectedFilter = FILTER_OFF;
-
   void initGpio() {
     GPIOA->DIR |= 0
                   // A7 = UART1 TX default as OUTPUT from bootloader!
