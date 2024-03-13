@@ -1,10 +1,34 @@
-#ifndef SVC_RENDER_H
-#define SVC_RENDER_H
+#pragma once
 
-#include <stdint.h>
+#include "../apps/apps.hpp"
+#include "../driver/st7565.hpp"
+#include "../driver/system.hpp"
+#include "../scheduler.hpp"
+#include "../ui/statusline.hpp"
 
-void SVC_RENDER_Init();
-void SVC_RENDER_Update();
-void SVC_RENDER_Deinit();
+class RenderService {
+  const uint32_t RENDER_TIME = 40;
 
-#endif /* end of include guard: SVC_RENDER_H */
+public:
+  RenderService(ST7565 *d) : display{d} {}
+
+  void init() {}
+
+  void update() {
+    if (redrawScreen && Now() - lastRender >= RENDER_TIME) {
+      APPS_render();
+      STATUSLINE_render();
+
+      display->render();
+      lastRender = elapsedMilliseconds;
+      redrawScreen = false;
+    }
+  }
+
+  void deinit() {}
+
+protected:
+  ST7565 *display;
+  bool redrawScreen;
+  uint32_t lastRender = 0;
+};

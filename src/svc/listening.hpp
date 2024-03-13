@@ -1,11 +1,35 @@
-#ifndef SVC_LISTEN_H
-#define SVC_LISTEN_H
+#pragma once
 
-#include "../helpers/lootlist.hpp"
-void SVC_LISTEN_Init();
-void SVC_LISTEN_Update();
-void SVC_LISTEN_Deinit();
+#include "../radio.hpp"
 
-extern Loot *(*gListenFn)();
+typedef Loot *(*ListenFn)();
 
-#endif /* end of include guard: SVC_LISTEN_H */
+class ListenService {
+public:
+  ListenService(Radio *r) : radio{r} {}
+
+  void init() {
+    if (!listenFn) {
+      setListenFunction(radio->updateMeasurements);
+    }
+    radio->rxEnable();
+  }
+
+  void update() {
+    listenFn();
+    if (radio->vfo.scan.timeout < 10) {
+      radio->resetRSSI();
+    }
+  }
+
+  void deinit() {
+    listenFn = nullptr;
+    radio->idle();
+  }
+
+  void setListenFunction(ListenFn fn) { listenFn = fn; }
+
+private:
+  Radio *radio;
+  ListenFn listenFn = nullptr;
+};

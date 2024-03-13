@@ -84,6 +84,13 @@ public:
   }
 
   void setF(uint32_t f) { mainRadio->setF(f); }
+  void rxEnable() { mainRadio->rxEnable(); }
+  void idle() { mainRadio->idle(); }
+  void resetRSSI() {
+    if (mainRadio == &bk4819) {
+      bk4819.resetRSSI();
+    }
+  }
 
   uint8_t getBandIndex(uint32_t f) {
     for (uint8_t i = 0; i < ARRAY_SIZE(STOCK_BANDS); ++i) {

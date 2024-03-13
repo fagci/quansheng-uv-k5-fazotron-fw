@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../inc/dp32g030/gpio.h"
+#include "../inc/dp32g030/portcon.h"
+#include "../inc/dp32g030/pwmplus.h"
 #include "../inc/dp32g030/spi.h"
 #include "../misc.hpp"
 #include "gpio.hpp"
@@ -47,6 +49,28 @@ public:
     SPI_WaitForUndocumentedTxFifoStatusBit();
     SPI_ToggleMasterMode(&SPI0->CR, true);
     fillScreen(0x00);
+
+    initBacklight();
+  }
+
+  void initBacklight() {
+    // 48MHz / 94 / 1024 ~ 500Hz
+    const uint32_t PWM_FREQUENCY_HZ = 1000;
+    PWM_PLUS0_CLKSRC |= ((CPU_CLOCK_HZ / 1024 / PWM_FREQUENCY_HZ) << 16);
+    PWM_PLUS0_PERIOD = 1023;
+
+    PORTCON_PORTB_SEL0 &= ~(0
+                            // Back light
+                            | PORTCON_PORTB_SEL0_B6_MASK);
+    PORTCON_PORTB_SEL0 |= 0
+                          // Back light PWM
+                          | PORTCON_PORTB_SEL0_B6_BITS_PWMP0_CH0;
+
+    PWM_PLUS0_GEN =
+        PWMPLUS_GEN_CH0_OE_BITS_ENABLE | PWMPLUS_GEN_CH0_OUTINV_BITS_ENABLE | 0;
+
+    PWM_PLUS0_CFG = PWMPLUS_CFG_CNT_REP_BITS_ENABLE |
+                    PWMPLUS_CFG_COUNTER_EN_BITS_ENABLE | 0;
   }
 
   void render() {
@@ -94,6 +118,10 @@ public:
     SPI_ToggleMasterMode(&SPI0->CR, true);
   }
 
+  void setBrightness(uint8_t brigtness) {
+    PWM_PLUS0_CH0_COMP = (1 << brigtness) - 1;
+  }
+
 private:
   uint8_t gFrameBuffer[8][LCD_WIDTH];
   bool gRedrawScreen = true;
@@ -127,4 +155,9 @@ private:
       continue;
     SPI0->WDR = Value;
   }
+};
+
+class Backlight {
+public:
+  void init() {}
 };

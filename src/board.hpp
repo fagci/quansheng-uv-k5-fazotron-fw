@@ -25,7 +25,6 @@ public:
 
   Radio radio;
   ST7565 display;
-  Backlight backlight;
 
   void init() {
     initPortcon();
@@ -34,7 +33,6 @@ public:
 
     display.init();
     radio.init();
-    backlight.init();
   }
 
   void selectFilter(Filter filterNeeded) {
