@@ -100,6 +100,7 @@ public:
       bk4819.resetRSSI();
     }
   }
+  bool isSquelchOpen() { return mainRadio->isSquelchOpen(); }
 
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
@@ -173,54 +174,6 @@ public:
 
     return (uint8_t)(pCal->m + (((pCal->e - pCal->m) * (f - Middle)) /
                                 (range->end - Middle)));
-  }
-
-  bool isSqOpenSimple(uint16_t r) {
-    uint8_t band = vfo.f > SETTINGS_GetFilterBound() ? 1 : 0;
-    uint8_t sq = vfo.sq.level;
-    uint16_t ro = SQ[band][0][sq];
-    uint16_t rc = SQ[band][1][sq];
-    uint8_t no = SQ[band][2][sq];
-    uint8_t nc = SQ[band][3][sq];
-    uint8_t go = SQ[band][4][sq];
-    uint8_t gc = SQ[band][5][sq];
-
-    uint8_t n, g;
-
-    bool open;
-
-    switch (vfo.sq.type) {
-    case SQUELCH_RSSI_NOISE_GLITCH:
-      n = bk4819.getNoise();
-      g = bk4819.getGlitch();
-      open = r >= ro && n <= no && g <= go;
-      if (r < rc || n > nc || g > gc) {
-        open = false;
-      }
-      break;
-    case SQUELCH_RSSI_NOISE:
-      n = bk4819.getNoise();
-      open = r >= ro && n <= no;
-      if (r < rc || n > nc) {
-        open = false;
-      }
-      break;
-    case SQUELCH_RSSI_GLITCH:
-      g = bk4819.getGlitch();
-      open = r >= ro && g <= go;
-      if (r < rc || g > gc) {
-        open = false;
-      }
-      break;
-    case SQUELCH_RSSI:
-      open = r >= ro;
-      if (r < rc) {
-        open = false;
-      }
-      break;
-    }
-
-    return open;
   }
 
   bool isBK1080Range(uint32_t f) { return f >= 6400000 && f <= 10800000; }
@@ -498,57 +451,19 @@ public:
 
   uint16_t getRSSI() { return gIsBK1080 ? 128 : bk4819.getRSSI(); }
 
-  static uint32_t lastTailTone = 0;
-  Loot *updateMeasurements() {
-    Loot *msm = LOOT_Get(vfo.f);
-    msm->rssi = getRSSI();
-    msm->open = gIsBK1080 ? true
-                          : (vfo.sq.openTime || vfo.sq.closeTime
-                                 ? bk4819.isSquelchOpen()
-                                 : isSqOpenSimple(msm->rssi));
-
+  void handleInterrupts(void *handler(uint16_t intBits)) {
     while (bk4819.readRegister(BK4819_REG_0C) & 1u) {
       bk4819.writeRegister(BK4819_REG_02, 0);
 
-      uint16_t intBits = bk4819.readRegister(BK4819_REG_02);
-
-      // MSG_StorePacket(intBits);
-
-      if (intBits & BK4819_REG_02_CxCSS_TAIL) {
-        msm->open = false;
-        lastTailTone = Now();
-      }
+      handler(bk4819.readRegister(BK4819_REG_02));
     }
-
-    // else sql reopens
-    if ((Now() - lastTailTone) < 250) {
-      msm->open = false;
-    }
-
-    if (!gMonitorMode && vfo.sq.level != 0) {
-      LOOT_Update(msm);
-    }
-
-    bool rx = msm->open;
-    if (gTxState != TX_ON) {
-      if (gMonitorMode) {
-        rx = true;
-      } else if (gSettings.noListen && (gCurrentApp->id == APP_SPECTRUM ||
-                                        gCurrentApp->id == APP_ANALYZER)) {
-        rx = false;
-      } else if (gSettings.skipGarbageFrequencies && (vfo.f % 1300000 == 0)) {
-        rx = false;
-      }
-      toggleRX(rx);
-    }
-    return msm;
   }
 
-  bool updateMeasurementsEx(Loot *dest) {
-    Loot *msm = LOOT_Get(vfo.f);
-    updateMeasurements();
-    LOOT_UpdateEx(dest, msm);
-    return msm->open;
+  bool isSqOpen(bool manual) {
+    return gIsBK1080 ? true
+                     : (manual ? bk4819.isSquelchOpen()
+                               : isSqOpenSimple(
+                                     msm->rssi)); // FIXME: actual RSSI problem
   }
 
   void enableToneDetection() {
@@ -669,8 +584,6 @@ private:
   BK1080 bk1080;
 
   AbstractRadio *mainRadio;
-
-  Loot *gCurrentLoot;
 
   bool gIsListening = false;
   bool gMonitorMode = false;

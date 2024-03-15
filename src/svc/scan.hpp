@@ -4,6 +4,10 @@
 #include "../scheduler.hpp"
 
 class ScanService {
+  class CallbackFunctor {
+  public:
+    void operator()(bool v) {}
+  };
 
 public:
   static void next() {

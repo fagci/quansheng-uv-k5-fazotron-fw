@@ -53,12 +53,6 @@ typedef enum {
 } Step;
 
 typedef enum {
-  UPCONVERTER_OFF,
-  UPCONVERTER_50M,
-  UPCONVERTER_125M,
-} UpconverterTypes;
-
-typedef enum {
   OFFSET_NONE,
   OFFSET_PLUS,
   OFFSET_MINUS,

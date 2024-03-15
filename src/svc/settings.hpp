@@ -1,9 +1,16 @@
 #pragma once
+#include "../driver/eeprom.hpp"
 #include <stdint.h>
 
 class SettingsService {
 public:
-  EEPROMType eepromType : 3;
+  typedef enum {
+    UPCONVERTER_OFF,
+    UPCONVERTER_50M,
+    UPCONVERTER_125M,
+  } UpconverterTypes;
+
+  EEPROM::Type eepromType : 3;
   uint8_t checkbyte : 5; // 1
   uint8_t scrambler : 4;
   uint8_t batsave : 4; // 2
