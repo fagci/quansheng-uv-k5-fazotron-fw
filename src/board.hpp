@@ -26,14 +26,6 @@ public:
     radio.init();
   }
 
-  void getBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent) {
-    ADC_Start();
-
-    while (!ADC_CheckEndOfConversion(ADC_CH9)) {
-    }
-    *pVoltage = ADC_GetValue(ADC_CH4);
-    *pCurrent = ADC_GetValue(ADC_CH9);
-  }
 
 private:
   void initGpio() {
