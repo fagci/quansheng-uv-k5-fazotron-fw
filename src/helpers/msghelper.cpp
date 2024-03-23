@@ -115,7 +115,7 @@ void MSG_FSKSendData() {
 
   MSG_ConfigureFSK(false);
 
-  SYSTEM_DelayMs(100);
+  delayMs(100);
 
   { // load the entire packet data into the TX FIFO buffer
     for (size_t i = 0, j = 0; i < sizeof(packet.buf); i += 2, j++) {
@@ -133,7 +133,7 @@ void MSG_FSKSendData() {
     unsigned int timeout = 1000 / 5;
 
     while (timeout-- > 0) {
-      SYSTEM_DelayMs(5);
+      delayMs(5);
       if (BK4819_ReadRegister(BK4819_REG_0C) &
           (1u << 0)) { // we have interrupt flags
         BK4819_WriteRegister(BK4819_REG_02, 0);
@@ -143,7 +143,7 @@ void MSG_FSKSendData() {
     }
   }
 
-  SYSTEM_DelayMs(100);
+  delayMs(100);
 
   // disable TX
   MSG_ConfigureFSK(true);
@@ -184,11 +184,11 @@ void MSG_SendPacket() {
 
   msgStatus = SENDING;
 
-  SYSTEM_DelayMs(50);
+  delayMs(50);
 
   MSG_FSKSendData();
 
-  SYSTEM_DelayMs(50);
+  delayMs(50);
 
   RADIO_ToggleTX(false);
 
@@ -221,7 +221,7 @@ void MSG_HandleReceive() {
   // Transmit a message to the sender that we have received the message
   if (packet.data.header == MESSAGE_PACKET) {
     // wait so the correspondent radio can properly receive it
-    SYSTEM_DelayMs(700);
+    delayMs(700);
     MSG_SendAck();
   }
 }
@@ -250,7 +250,7 @@ void MSG_StorePacket(const uint16_t intBits) {
         packet.buf[gFSKWriteIndex++] = (word >> 8) & 0xff;
     }
 
-    SYSTEM_DelayMs(10);
+    delayMs(10);
   }
 
   if (rxFinished) {

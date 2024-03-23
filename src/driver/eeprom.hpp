@@ -108,7 +108,7 @@ public:
 
       I2C_Stop();
       __enable_irq();
-      SYSTEM_DelayMs(8);
+      delayMs(8);
 
       pBuffer += n;
       address += n;

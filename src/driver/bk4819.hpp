@@ -135,7 +135,7 @@ public:
 
     while (readRegister(BK4819_REG_0C) & 1U) {
       writeRegister(BK4819_REG_02, 0);
-      SYSTEM_DelayMs(1);
+      delayMs(1);
     }
     writeRegister(BK4819_REG_3F, 0);
     writeRegister(BK4819_REG_7D, 0xE94F);
@@ -415,7 +415,7 @@ public:
     setAF(bLocalLoopback ? AF_BEEP : AF_MUTE);
 
     enableTXLink();
-    SYSTEM_DelayMs(50);
+    delayMs(50);
     exitTxMute();
   }
 
@@ -424,14 +424,14 @@ public:
     setAF(AF_MUTE);
     writeRegister(BK4819_REG_70, 0xE000);
     enableTXLink();
-    SYSTEM_DelayMs(50);
+    delayMs(50);
     writeRegister(BK4819_REG_71, 0x142A);
     exitTxMute();
-    SYSTEM_DelayMs(80);
+    delayMs(80);
     enterTxMute();
     writeRegister(BK4819_REG_71, 0x1C3B);
     exitTxMute();
-    SYSTEM_DelayMs(80);
+    delayMs(80);
     enterTxMute();
     writeRegister(BK4819_REG_70, 0x0000);
     writeRegister(BK4819_REG_30, 0xC1FE);
@@ -463,10 +463,10 @@ public:
       writeRegister(BK4819_REG_5F,
                     FSK_RogerTable[i]); // Send the data from the roger table
     }
-    SYSTEM_DelayMs(20);
+    delayMs(20);
     writeRegister(BK4819_REG_59,
                   0x0868); // 4 sync bytes, 6 byte preamble, Enable FSK TX
-    SYSTEM_DelayMs(180);
+    delayMs(180);
     // Stop FSK TX, reset Tone2, disable FSK.
     writeRegister(BK4819_REG_59, 0x0068);
     writeRegister(BK4819_REG_70, 0x0000);
@@ -484,7 +484,7 @@ public:
     setAF(bLocalLoopback ? AF_BEEP : AF_MUTE);
     writeRegister(BK4819_REG_70, 0xD3D3);
     enableTXLink();
-    SYSTEM_DelayMs(50);
+    delayMs(50);
     playDTMF(Code);
     exitTxMute();
   }
@@ -660,9 +660,9 @@ public:
       } else {
         Delay = CodePersistTime;
       }
-      SYSTEM_DelayMs(Delay);
+      delayMs(Delay);
       enterTxMute();
-      SYSTEM_DelayMs(CodeInternalTime);
+      delayMs(CodeInternalTime);
     }
   }
 
@@ -850,7 +850,7 @@ public:
     writeRegister(BK4819_REG_3F, 0x0000); // Disable interrupts
     writeRegister(BK4819_REG_59,
                   0x0068); // Sync length 4 bytes, 7 byte preamble
-    SYSTEM_DelayMs(30);
+    delayMs(30);
     idle();
   }
 
@@ -892,12 +892,12 @@ private:
       } else {
         GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
       }
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       Data <<= 1;
       GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-      SYSTICK_DelayUs(1);
+      delayUs(1);
     }
   }
 
@@ -908,16 +908,16 @@ private:
     PORTCON_PORTC_IE = (PORTCON_PORTC_IE & ~PORTCON_PORTC_IE_C2_MASK) |
                        PORTCON_PORTC_IE_C2_BITS_ENABLE;
     GPIOC->DIR = (GPIOC->DIR & ~GPIO_DIR_2_MASK) | GPIO_DIR_2_BITS_INPUT;
-    SYSTICK_DelayUs(1);
+    delayUs(1);
 
     Value = 0;
     for (i = 0; i < 16; i++) {
       Value <<= 1;
       Value |= GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
       GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-      SYSTICK_DelayUs(1);
+      delayUs(1);
     }
     PORTCON_PORTC_IE = (PORTCON_PORTC_IE & ~PORTCON_PORTC_IE_C2_MASK) |
                        PORTCON_PORTC_IE_C2_BITS_DISABLE;
@@ -934,12 +934,12 @@ private:
       } else {
         GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
       }
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
       Data <<= 1;
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-      SYSTICK_DelayUs(1);
+      delayUs(1);
     }
   }
 
@@ -948,7 +948,7 @@ private:
 
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
     GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
 
     writeU8(Register | 0x80);
@@ -956,7 +956,7 @@ private:
     Value = readU16();
 
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
 
@@ -966,14 +966,14 @@ private:
   void writeRegister(BK4819_REGISTER_t Register, uint16_t Data) {
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
     GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
     writeU8(Register);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     writeU16(Data);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    SYSTICK_DelayUs(1);
+    delayUs(1);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
     GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
   }

@@ -36,10 +36,10 @@ public:
       writeRegister((BK1080_Register_t)i, BK1080_RegisterTable[i]);
     }
 
-    SYSTEM_DelayMs(250);
+    delayMs(250);
     writeRegister(BK1080_REG_25_INTERNAL, 0xA83C);
     writeRegister(BK1080_REG_25_INTERNAL, 0xA8BC);
-    SYSTEM_DelayMs(60);
+    delayMs(60);
     isInitBK1080 = true;
   }
 
@@ -68,7 +68,7 @@ public:
 
     writeRegister(BK1080_REG_05_SYSTEM_CONFIGURATION2, sysCfg2);
     writeRegister(BK1080_REG_03_CHANNEL, channel);
-    SYSTEM_DelayMs(10);
+    delayMs(10);
     writeRegister(BK1080_REG_03_CHANNEL, channel | 0x8000);
   }
 

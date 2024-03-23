@@ -132,11 +132,11 @@ public:
   void toggleBK4819(bool on) {
     if (on) {
       bk4819.mute(false);
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       AUDIO_ToggleSpeaker(true);
     } else {
       AUDIO_ToggleSpeaker(false);
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       bk4819.mute(true);
     }
   }
@@ -144,11 +144,11 @@ public:
   void toggleBK1080(bool on) {
     if (on) {
       bk1080.mute(false);
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       AUDIO_ToggleSpeaker(true);
     } else {
       AUDIO_ToggleSpeaker(false);
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       bk1080.mute(true);
     }
   }
@@ -216,7 +216,7 @@ public:
       break;
     }
 
-    SYSTEM_DelayMs(200);
+    delayMs(200);
   }
 
   static uint32_t getTXFEx(VFO *vfo) {
@@ -292,11 +292,11 @@ public:
 
       bk4819.prepareTransmit();
 
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       bk4819.toggleGpioOut(BK4819_GPIO1_PIN29_PA_ENABLE, true);
-      SYSTEM_DelayMs(5);
+      delayMs(5);
       bk4819.setupPowerAmplifier(power, txF);
-      SYSTEM_DelayMs(10);
+      delayMs(10);
       bk4819.exitSubAu();
     } else if (gTxState == TX_ON) {
       bk4819.exitDTMF_TX(true);

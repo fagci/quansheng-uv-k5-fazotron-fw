@@ -1,27 +1,50 @@
-/* Copyright 2023 Dual Tachyon
- * https://github.com/DualTachyon
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- */
+#pragma once
 
-#ifndef AUDIO_H
-#define AUDIO_H
-
+#include "../inc/dp32g030/gpio.h"
+#include "bk4819.hpp"
+#include "gpio.hpp"
+#include "system.hpp"
 #include <stdint.h>
 
-void AUDIO_ToggleSpeaker(bool on);
+class Audio {
+public:
+  bool speakerOn = false;
 
-// Do not use when receiving (IDK why yet)
-void AUDIO_PlayTone(uint32_t frequency, uint16_t duration);
+  void toggleSpeaker(bool on) {
+    speakerOn = on;
+    if (on) {
+      GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
+    } else {
+      GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
+    }
+  }
 
-#endif
+  void playTone(uint32_t frequency, uint16_t duration) {
+    bool isSpeakerWasOn = speakerOn;
+    uint16_t ToneConfig = BK4819_ReadRegister(BK4819_REG_71);
+
+    toggleSpeaker(false);
+    // BK4819_RX_TurnOn();
+
+    delayMs(20);
+    BK4819_PlayTone(frequency, true);
+    delayMs(2);
+
+    toggleSpeaker(true);
+    delayMs(60);
+
+    BK4819_ExitTxMute();
+    delayMs(duration);
+    BK4819_EnterTxMute();
+
+    delayMs(20);
+    toggleSpeaker(false);
+
+    delayMs(5);
+    BK4819_TurnsOffTones_TurnsOnRX();
+    delayMs(5);
+
+    BK4819_WriteRegister(BK4819_REG_71, ToneConfig);
+    toggleSpeaker(isSpeakerWasOn);
+  }
+};

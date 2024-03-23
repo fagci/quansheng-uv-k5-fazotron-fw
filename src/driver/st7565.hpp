@@ -25,7 +25,7 @@ public:
     ST7565_Configure_GPIO_B11();
     SPI_ToggleMasterMode(&SPI0->CR, false);
     writeByte(0xE2);
-    SYSTEM_DelayMs(0x78);
+    delayMs(0x78);
     writeByte(0xA2);
     writeByte(0xC0);
     writeByte(0xA1);
@@ -36,14 +36,14 @@ public:
     // ST7565_WriteByte(0x1F); // contrast
     writeByte(23 + contrast); // brightness 0 ~ 63
     writeByte(0x2B);
-    SYSTEM_DelayMs(1);
+    delayMs(1);
     writeByte(0x2E);
-    SYSTEM_DelayMs(1);
+    delayMs(1);
     writeByte(0x2F);
     writeByte(0x2F);
     writeByte(0x2F);
     writeByte(0x2F);
-    SYSTEM_DelayMs(0x28);
+    delayMs(0x28);
     writeByte(0x40);
     writeByte(0xAF);
     SPI_WaitForUndocumentedTxFifoStatusBit();
@@ -128,11 +128,11 @@ private:
 
   void ST7565_Configure_GPIO_B11() {
     GPIO_SetBit(&GPIOB->DATA, GPIOB_PIN_ST7565_RES);
-    SYSTEM_DelayMs(1);
+    delayMs(1);
     GPIO_ClearBit(&GPIOB->DATA, GPIOB_PIN_ST7565_RES);
-    SYSTEM_DelayMs(20);
+    delayMs(20);
     GPIO_SetBit(&GPIOB->DATA, GPIOB_PIN_ST7565_RES);
-    SYSTEM_DelayMs(120);
+    delayMs(120);
   }
 
   void selectColumnAndLine(uint8_t Column, uint8_t Line) {

@@ -10,7 +10,7 @@ extern "C" {
 
 #define CPU_CLOCK_HZ 48000000
 
-static void SYSTEM_ConfigureClocks() {
+extern void SYSTEM_ConfigureClocks() {
   // Set source clock from external crystal
   PMU_SRC_CFG =
       (PMU_SRC_CFG & ~(PMU_SRC_CFG_RCHF_SEL_MASK | PMU_SRC_CFG_RCHF_EN_MASK)) |
@@ -25,7 +25,7 @@ static void SYSTEM_ConfigureClocks() {
       SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_BITS_DISABLE;
 }
 
-static void SYSTEM_ConfigureSysCon() {
+extern void SYSTEM_ConfigureSysCon() {
   // Enable clock gating of blocks we need.
   SYSCON_DEV_CLK_GATE = 0 | SYSCON_DEV_CLK_GATE_GPIOA_BITS_ENABLE |
                         SYSCON_DEV_CLK_GATE_GPIOB_BITS_ENABLE |
@@ -38,11 +38,11 @@ static void SYSTEM_ConfigureSysCon() {
                         SYSCON_DEV_CLK_GATE_PWM_PLUS0_BITS_ENABLE;
 }
 
-static const uint32_t tickMultiplier = 48;
+extern const uint32_t tickMultiplier = 48;
 
-static void SYSTICK_Init() { SysTick_Config(48000); }
+extern void SYSTICK_Init() { SysTick_Config(48000); }
 
-static void SYSTICK_DelayUs(uint32_t Delay) {
+extern void delayUs(uint32_t Delay) {
   uint32_t i;
   uint32_t Start;
   uint32_t Previous;
@@ -66,4 +66,4 @@ static void SYSTICK_DelayUs(uint32_t Delay) {
   } while (i < Delay * tickMultiplier);
 }
 
-static void SYSTEM_DelayMs(uint32_t Delay) { SYSTICK_DelayUs(Delay * 1000); }
+extern void delayMs(uint32_t Delay) { delayUs(Delay * 1000); }

@@ -34,8 +34,9 @@ SIZE = arm-none-eabi-size
 
 ASFLAGS = $(CPU)
 CFLAGS_COMMON = $(CPU) -Os -MMD
+CFLAGS_COMMON += -fno-exceptions -fno-rtti
 CFLAGS_COMMON += -Wall -Wextra -Wno-error -fpermissive
-CFLAGS_COMMON += -fshort-enums -fno-exceptions -ffunction-sections -fdata-sections -fno-builtin -fno-delete-null-pointer-checks
+CFLAGS_COMMON += -fshort-enums -ffunction-sections -fdata-sections -fno-builtin -fno-delete-null-pointer-checks
 CFLAGS_COMMON += -DPRINTF_USER_DEFINED_PUTCHAR
 CFLAGS_COMMON += -DPRINTF_DISABLE_SUPPORT_LONG_LONG
 CFLAGS_COMMON += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
@@ -45,7 +46,7 @@ CFLAGS_COMMON += -DPRINTF_DISABLE_SUPPORT_FLOAT
 
 CFLAGS = $(CFLAGS_COMMON) -std=c2x
 CPPFLAGS = $(CFLAGS_COMMON) -std=c++20
-LDFLAGS = $(CPU) -nostartfiles -Wl,-T,firmware.ld
+LDFLAGS = $(CPU) -nostartfiles -nostdlib -nodefaultlibs -Wl,-T,firmware.ld
 
 INC =
 INC += -I ./src

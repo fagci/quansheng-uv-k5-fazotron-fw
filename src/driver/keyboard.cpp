@@ -111,7 +111,7 @@ KEY_Code_t KEYBOARD_Poll() {
     // Read all 4 GPIO pins at once .. with de-noise, max of 8 sample loops
     for (i = 0, k = 0, reg = 0; i < 3 && k < 8; i++, k++) {
       uint16_t reg2;
-      SYSTICK_DelayUs(1);
+      delayUs(1);
       reg2 = GPIOA->DATA;
       if (reg != reg2) { // noise
         reg = reg2;
