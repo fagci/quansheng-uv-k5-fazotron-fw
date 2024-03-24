@@ -79,11 +79,9 @@ public:
 
   SettingsService(EEPROM *e) : eeprom{e} {}
 
-  void save() {
-    EEPROM_WriteBuffer(SETTINGS_OFFSET, &gSettings, SETTINGS_SIZE);
-  }
+  void save() { eeprom->writeBuffer(0, this, sizeof(*this)); } // FIXME: private members also counts
 
-  void load() { EEPROM_ReadBuffer(SETTINGS_OFFSET, &gSettings, SETTINGS_SIZE); }
+  void load() { eeprom->readBuffer(0, this, sizeof(*this)); } // FIXME: private members also counts
 
   void delayedSave() {
     TaskRemove(save);
