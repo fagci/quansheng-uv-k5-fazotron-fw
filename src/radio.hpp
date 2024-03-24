@@ -1,62 +1,51 @@
 #pragma once
 
 #include "driver/abstractradio.hpp"
+#include "driver/audio.hpp"
 #include "driver/bk1080.hpp"
 #include "driver/bk4819.hpp"
 #include "driver/system.hpp"
 #include "globals.hpp"
-#include "helpers/measurements.hpp"
 #include "misc.hpp"
 #include <stdint.h>
 #include <string.h>
 
-class Radio : AbstractRadio {
-public:
-  constexpr static uint32_t VHF_UHF_BOUND1 = 24000000;
-  constexpr static uint32_t VHF_UHF_BOUND2 = 28000000;
+typedef enum {
+  SCAN_TO_0,
+  SCAN_TO_500ms,
+  SCAN_TO_1s,
+  SCAN_TO_2s,
+  SCAN_TO_5s,
+  SCAN_TO_10s,
+  SCAN_TO_30s,
+  SCAN_TO_1min,
+  SCAN_TO_2min,
+  SCAN_TO_5min,
+  SCAN_TO_NONE,
+} ScanTimeout;
 
-  typedef enum {
-    SCAN_TO_0,
-    SCAN_TO_500ms,
-    SCAN_TO_1s,
-    SCAN_TO_2s,
-    SCAN_TO_5s,
-    SCAN_TO_10s,
-    SCAN_TO_30s,
-    SCAN_TO_1min,
-    SCAN_TO_2min,
-    SCAN_TO_5min,
-    SCAN_TO_NONE,
-  } ScanTimeout;
+typedef struct {
+  uint8_t timeout : 8;
+  ScanTimeout openedTimeout : 4;
+  ScanTimeout closedTimeout : 4;
+} __attribute__((packed)) ScanSettings;
 
-  typedef enum {
-    FILTER_VHF,
-    FILTER_UHF,
-    FILTER_OFF,
-  } Filter;
+typedef struct {
+  uint8_t level : 6;
+  uint8_t openTime : 2;
+  AbstractRadio::SquelchType type;
+  uint8_t closeTime : 3;
+} __attribute__((packed)) SquelchSettings;
 
-  typedef struct {
-    uint8_t timeout : 8;
-    ScanTimeout openedTimeout : 4;
-    ScanTimeout closedTimeout : 4;
-  } __attribute__((packed)) ScanSettings;
-
-  typedef struct {
-    uint8_t level : 6;
-    uint8_t openTime : 2;
-    SquelchType type;
-    uint8_t closeTime : 3;
-  } __attribute__((packed)) SquelchSettings;
-  // getsize(SquelchSettings)
-
+struct VFO {
   int16_t channel;
   ScanSettings scan;
   Step step : 4;
   uint32_t f : 27;
   uint32_t offset : 27;
   OffsetDirection offsetDir;
-  ModulationType modulation : 4;
-  FilterBandwidth bw : 2;
+  AbstractRadio::ModulationType modulation : 4;
+  AbstractRadio::FilterBandwidth bw : 2;
   TXOutputPower power : 2;
   uint8_t codeRX;
   uint8_t codeTX;
@@ -64,6 +53,19 @@ public:
   uint8_t codeTypeTX : 4;
   SquelchSettings sq;
   uint8_t gainIndex : 5;
+} __attribute__((packed));
+
+class Radio : AbstractRadio, VFO {
+public:
+  constexpr static uint32_t VHF_UHF_BOUND1 = 24000000;
+  constexpr static uint32_t VHF_UHF_BOUND2 = 28000000;
+
+  typedef enum {
+    FILTER_VHF,
+    FILTER_UHF,
+    FILTER_OFF,
+  } Filter;
+  // getsize(SquelchSettings)
 
   void init() {
     bk4819.init();
@@ -105,9 +107,9 @@ public:
     if (on) {
       bk4819.mute(false);
       delayMs(10);
-      AUDIO_ToggleSpeaker(true);
+      Audio::toggleSpeaker(true);
     } else {
-      AUDIO_ToggleSpeaker(false);
+      Audio::toggleSpeaker(false);
       delayMs(10);
       bk4819.mute(true);
     }
@@ -117,14 +119,13 @@ public:
     if (on) {
       bk1080.mute(false);
       delayMs(10);
-      AUDIO_ToggleSpeaker(true);
+      Audio::toggleSpeaker(true);
     } else {
-      AUDIO_ToggleSpeaker(false);
+      Audio::toggleSpeaker(false);
       delayMs(10);
       bk1080.mute(true);
     }
   }
-
 
   void toggleRX(bool on) {
     if (gIsListening == on) {
@@ -324,4 +325,4 @@ private:
 
   TXState gTxState = TX_UNKNOWN;
   Filter selectedFilter = FILTER_OFF;
-} __attribute__((packed));
+};

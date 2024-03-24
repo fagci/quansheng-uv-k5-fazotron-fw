@@ -10,8 +10,7 @@ class Audio {
 public:
   Audio(BK4819 *bk) : bk4819(bk) {}
 
-  void toggleSpeaker(bool on) {
-    speakerOn = on;
+  static void toggleSpeaker(bool on) {
     if (on) {
       GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
     } else {
@@ -19,8 +18,12 @@ public:
     }
   }
 
+  static bool isSpeakerOn() {
+    return GPIO_CheckBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
+  }
+
   void playTone(uint32_t frequency, uint16_t duration) {
-    bool isSpeakerWasOn = speakerOn;
+    bool isSpeakerWasOn = isSpeakerOn();
     uint16_t ToneConfig = bk4819->readRegister(BK4819_REG_71);
 
     toggleSpeaker(false);
@@ -49,6 +52,5 @@ public:
   }
 
 private:
-  bool speakerOn = false;
   BK4819 *bk4819;
 };
