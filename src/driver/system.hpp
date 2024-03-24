@@ -38,6 +38,7 @@ static void SYSTEM_ConfigureSysCon() {
 }
 
 static const uint32_t tickMultiplier = 48;
+static uint32_t elapsedMilliseconds = 0;
 
 extern void SYSTICK_Init() {
   SysTick_Config(48000);
@@ -70,16 +71,7 @@ extern void delayUs(uint32_t Delay) {
 
 extern void delayMs(uint32_t Delay) { delayUs(Delay * 1000); }
 
-extern "C" void SystickHandler() {
-  Task *task;
-  for (uint8_t i = 0; i < tasksCount; ++i) {
-    task = &tasks[i];
-    if (task->active && task->handler && task->countdown) {
-      --task->countdown;
-    }
-  }
-  elapsedMilliseconds++;
-}
+extern "C" void SystickHandler() { elapsedMilliseconds++; }
 
 extern uint32_t Now() { return elapsedMilliseconds; }
 

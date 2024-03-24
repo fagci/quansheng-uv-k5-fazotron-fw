@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./driver/uart.hpp"
+#include "driver/system.hpp"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -90,6 +91,17 @@ public:
 
   void tasksUpdate() {
     Task *task;
+    if (Now() - lastUpdate == 0) {
+      return;
+    }
+    lastUpdate = Now();
+    for (uint8_t i = 0; i < tasksCount; ++i) {
+      task = &tasks[i];
+      if (task->active && task->handler && task->countdown) {
+        --task->countdown;
+      }
+    }
+
     for (uint8_t i = 0; i < tasksCount; ++i) {
       tasks[i].active = true;
     }
@@ -106,11 +118,10 @@ public:
     }
   }
 
-
 private:
+  uint32_t lastUpdate = 0;
   uint8_t tasksCount = 0;
   Task tasks[TASKS_MAX];
-  uint32_t elapsedMilliseconds = 0;
 
   void handle(Task *task) {
     UART_logf(3, "%s::handle() start", task->name);
