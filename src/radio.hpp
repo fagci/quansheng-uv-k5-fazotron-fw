@@ -104,7 +104,7 @@ public:
   TXState getTxState() { return gTxState; }
   void squelch(uint8_t level) {
     if (mainRadio == &bk4819) {
-      bk4819.squelch(level, vfo.f, openDelay, closeDelay);
+      bk4819.squelch(level, vfo.f);
     }
   }
 

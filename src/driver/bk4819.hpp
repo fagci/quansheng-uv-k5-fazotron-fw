@@ -265,8 +265,8 @@ public:
     writeRegister(BK4819_REG_4D, 0xA000 | SquelchCloseGlitchThresh);
     writeRegister(BK4819_REG_4E,
                   (1u << 14) |                         // 1 ???
-                      (uint16_t)(sqlOpenDelay << 11) | // 0..7
-                      (uint16_t)(sqlCloseDelay << 9) | // 0..3
+                      (uint16_t)(sqlOpenDelay << 11) | // 0..7 *5
+                      (uint16_t)(sqlCloseDelay << 9) | // 0..3 *3
                       SquelchOpenGlitchThresh);
     writeRegister(BK4819_REG_4F,
                   (SquelchCloseNoiseThresh << 8) | SquelchOpenNoiseThresh);
@@ -280,7 +280,7 @@ public:
   }
 
   void squelch(uint8_t sql, uint32_t f) {
-    uint8_t band = f > VHF_UHF_BOUND2 ? 1 : 0; // TODO: use user defined bound?
+    uint8_t band = f > vhfUhfBound ? 1 : 0; // TODO: use user defined bound?
     setupSquelch(SQ[band][0][sql], SQ[band][1][sql], SQ[band][2][sql],
                  SQ[band][3][sql], SQ[band][4][sql], SQ[band][5][sql]);
   }
@@ -978,6 +978,8 @@ private:
   uint16_t gBK4819_GpioOutState;
   uint8_t modTypeCurrent = 255;
 
-  uint8_t sqlOpenDelay = 0;
-  uint8_t sqlCloseDelay = 0;
+  uint8_t sqlOpenDelay = 5;
+  uint8_t sqlCloseDelay = 3;
+
+  uint32_t vhfUhfBound = 28000000;
 };
