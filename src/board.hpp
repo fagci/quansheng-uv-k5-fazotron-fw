@@ -1,23 +1,32 @@
 #pragma once
 
-#include "driver/adc.hpp"
-#include "driver/backlight.hpp"
-#include "driver/st7565.hpp"
+#include "../driver/adc.hpp"
+#include "../driver/backlight.hpp"
+#include "../driver/eeprom.hpp"
+#include "../driver/st7565.hpp"
+#include "../driver/system.hpp"
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
 #include "radio.hpp"
+#include "settings.hpp"
 #include <stdint.h>
 #include <string.h>
 
 class Board {
 
 public:
-  Radio radio;
-  ST7565 display;
+  static EEPROM eeprom;
+  static Radio radio;
+  static ST7565 display;
+  static SettingsService settings(&eeprom);
+
+  Board() { init(&settings); }
 
   void init() {
+    SYSTICK_Init();
+    eeprom.init(settings.eepromType);
     initPortcon();
     initGpio();
     initAdc();
@@ -25,7 +34,6 @@ public:
     display.init();
     radio.init();
   }
-
 
 private:
   void initGpio() {
