@@ -1,12 +1,15 @@
 #pragma once
 
 #include "../board.hpp"
+#include "../frequency.hpp"
 #include "../radio.hpp"
+#include "backlight.hpp"
 #include "settings.hpp"
 
 class ListenService {
 public:
-  ListenService(SettingsService *s, Board *b) : gSettings(s), board{b} {
+  ListenService(SettingsService *s, Board *b, BacklightService *bl)
+      : gSettings(s), board(b), backlightService(bl) {
     radio = board->radio;
     radio->squelch(radio->vfo.sq.level);
     radio->rxEnable();
@@ -48,7 +51,7 @@ public:
   }
 
   bool isSqOpenSimple(uint16_t r) {
-    uint8_t band = radio->vfo.f > SETTINGS_GetFilterBound() ? 1 : 0;
+    uint8_t band = radio->vfo.f > gSettings->getFilterBound() ? 1 : 0;
     uint8_t sq = radio->vfo.sq.level;
     uint16_t ro = SQ[band][0][sq];
     uint16_t rc = SQ[band][1][sq];
@@ -71,12 +74,13 @@ public:
     }
 
     if (gSettings->allowTX == TX_ALLOW_LPD_PMR &&
-        !FreqInRange(txF, &BAND_LPD) && !FreqInRange(txF, &BAND_PMR)) {
+        !Frequency::inRange(txF, &Frequency::BAND_LPD) &&
+        !Frequency::inRange(txF, &Frequency::BAND_PMR)) {
       return TX_DISABLED;
     }
 
     if (gSettings->allowTX == TX_ALLOW_LPD_PMR_SATCOM &&
-        !FreqInRange(txF, &BAND_LPD) && !FreqInRange(txF, &BAND_PMR) &&
+        Band::LPD->contains(txF) && !FreqInRange(txF, &BAND_PMR) &&
         !FreqInRange(txF, &BAND_SATCOM)) {
       return TX_DISABLED;
     }
@@ -96,13 +100,25 @@ public:
     return TX_ON;
   }
 
-  void toggleTX(bool on) {
-    uint8_t power = 0;
-    uint32_t txF = radio->getTXFEx(&radio->vfo);
+  void toggleRX(bool on) {
+    if (on) {
+      if (gSettings->backlightOnSquelch != BL_SQL_OFF) {
+        backlightService->on();
+      }
+    } else {
+      if (gSettings->backlightOnSquelch == BL_SQL_OPEN) {
+        BACKLIGHT_Toggle(false);
+      }
+    }
+    radio->toggleRX(on);
+  }
 
+  void toggleTX(bool on) {
     if (gTxState == on) {
       return;
     }
+    uint8_t power = 0;
+    uint32_t txF = radio->getTXFEx(&radio->vfo);
 
     if (on) {
       gTxState = getTXState(txF);
@@ -133,6 +149,8 @@ public:
 private:
   SettingsService *gSettings;
   Board *board;
+
+  BacklightService *backlightService;
   Radio *radio;
 
   TXState gTxState;

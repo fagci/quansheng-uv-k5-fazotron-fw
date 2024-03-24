@@ -1,24 +1,13 @@
 #pragma once
 
-#include "apps/apps.hpp"
 #include "driver/abstractradio.hpp"
-#include "driver/audio.hpp"
 #include "driver/bk1080.hpp"
 #include "driver/bk4819.hpp"
-#include "driver/gpio.hpp"
 #include "driver/system.hpp"
-#include "frequency.hpp"
 #include "globals.hpp"
-#include "helper/lootlist.hpp"
-#include "helper/measurements.hpp"
-#include "helpers/lootlist.hpp"
-#include <stdint.h>
-// #include "helper/msghelper.hpp"
 #include "helpers/measurements.hpp"
-#include "inc/dp32g030/gpio.hpp"
 #include "misc.hpp"
-#include "scheduler.hpp"
-#include "settings.hpp"
+#include <stdint.h>
 #include <string.h>
 
 class Radio : AbstractRadio {
@@ -118,11 +107,6 @@ public:
                          filterNeeded == FILTER_UHF);
   }
 
-  void onVfoUpdate() {
-    TaskRemove(saveCurrentCH);
-    TaskAdd("CH save", saveCurrentCH, 2000, false, 0);
-  }
-
   void toggleBK4819(bool on) {
     if (on) {
       bk4819.mute(false);
@@ -158,16 +142,6 @@ public:
     gIsListening = on;
 
     bk4819.toggleGpioOut(BK4819_GPIO0_PIN28_GREEN, on);
-
-    if (on) {
-      if (gSettings.backlightOnSquelch != BL_SQL_OFF) {
-        BACKLIGHT_On();
-      }
-    } else {
-      if (gSettings.backlightOnSquelch == BL_SQL_OPEN) {
-        BACKLIGHT_Toggle(false);
-      }
-    }
 
     if (gIsBK1080) {
       toggleBK1080(on);
@@ -258,13 +232,11 @@ public:
     }
     toggleBK1080(false);
     bk4819.setModulation(vfo.modulation);
-    onVfoUpdate();
   }
 
   void updateStep(bool inc) {
     vfo.step = IncDec<uint8_t, Step>(
         vfo.step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
-    onVfoUpdate();
   }
 
   void toggleListeningBW() {
@@ -275,7 +247,6 @@ public:
     }
 
     bk4819.setFilterBandwidth(vfo.bw);
-    onVfoUpdate();
   }
 
   void toggleTxPower() {
@@ -286,75 +257,24 @@ public:
     }
 
     bk4819.setFilterBandwidth(vfo.bw); // TODO: ???
-    onVfoUpdate();
   }
 
   void tuneToPure(uint32_t f, bool precise) {
     if (gIsBK1080) {
-      BK1080_SetFrequency(f);
+      bk1080.setF(f);
     } else {
       bk4819.tuneTo(f, precise);
     }
   }
 
-  void setupByCurrentCH() {
-    setupParams();
-    toggleBK1080(vfo.modulation == MOD_WFM && isBK1080Range(vfo.f));
-    tuneToPure(vfo.f, true);
-  }
-
-  // USE CASE: set vfo temporary for current app
-  void tuneTo(uint32_t f) {
-    vfo.f = f;
-    vfo.vfo.channel = -1;
-    setupByCurrentCH();
-  }
-
-  // USE CASE: set vfo and use in another app
-  void tuneToSave(uint32_t f) {
-    tuneTo(f);
-    saveCurrentCH();
-  }
-
-  void saveCurrentCH() { CHS_Save(gSettings.activeCH, radio); }
-
-  void vfoLoadCH(uint8_t i) {
-    CH ch;
-    CHANNELS_Load(gCH[i].vfo.channel, &gCH[i]);
-    strncpy(gCHNames[i], ch.name, 9);
-  }
-
-  void loadCurrentCH() {
-    for (uint8_t i = 0; i < 2; ++i) {
-      CHS_Load(i, &gCH[i]);
-      if (gCH[i].vfo.channel >= 0) {
-        vfoLoadCH(i);
-      }
-      gCHBands[i] = BAND_ByFrequency(gCH[i].f);
-
-      LOOT_Replace(&gLoot[i], gCH[i].f);
-    }
-
-    radio = &gCH[gSettings.activeCH];
-    gCurrentLoot = &gLoot[gSettings.activeCH];
-    setupByCurrentCH();
-  }
-
   void setSquelch(uint8_t sq) {
     vfo.sq.level = sq;
     bk4819.squelch(sq, vfo.f, vfo.sq.openTime, vfo.sq.closeTime);
-    onVfoUpdate();
   }
 
-  void setSquelchType(SquelchType t) {
-    vfo.sq.type = t;
-    onVfoUpdate();
-  }
+  void setSquelchType(SquelchType t) { vfo.sq.type = t; }
 
-  void setGain(uint8_t gainIndex) {
-    bk4819.setGain(vfo.gainIndex = gainIndex);
-    onVfoUpdate();
-  }
+  void setGain(uint8_t gainIndex) { bk4819.setGain(vfo.gainIndex = gainIndex); }
 
   void setupParams() {
     tuneToPure(vfo.f, true);
@@ -388,61 +308,7 @@ public:
     bk4819.writeRegister(BK4819_REG_3F, BK4819_REG_3F_CxCSS_TAIL);
   }
 
-  bool tuneToCH(int16_t num) {
-    if (CHANNELS_Existing(num)) {
-      CHANNELS_Load(num, radio);
-      vfo.vfo.channel = num;
-      onVfoUpdate();
-      setupByCurrentCH();
-      return true;
-    }
-    return false;
-  }
-
-  void nextCH(bool next) {
-    int16_t i;
-    if (vfo.vfo.channel >= 0) {
-      i = CHANNELS_Next(vfo.vfo.channel, next);
-      if (i > -1) {
-        vfo.vfo.channel = i;
-        vfoLoadCH(gSettings.activeCH);
-      }
-      onVfoUpdate();
-      setupByCurrentCH();
-      return;
-    }
-
-    i = vfo.vfo.channel;
-
-    if (!CHANNELS_Existing(vfo.vfo.channel)) {
-      i = CHANNELS_Next(vfo.vfo.channel, true);
-      if (i == -1) {
-        return;
-      }
-    }
-
-    tuneToCH(i);
-  }
-
   uint8_t getActiveVFOGroup() { return vfo.groups; }
-
-  void nextVFO() {
-    gSettings.activeCH = !gSettings.activeCH;
-    radio = &gCH[gSettings.activeCH];
-    gCurrentLoot = &gLoot[gSettings.activeCH];
-    setupByCurrentCH();
-    toggleRX(false);
-    SETTINGS_Save();
-  }
-
-  void toggleVfoMR() {
-    if (vfo.vfo.channel >= 0) {
-      vfo.vfo.channel = -1;
-    } else {
-      nextCH(true);
-    }
-    saveCurrentCH();
-  }
 
   void updateSquelchLevel(bool next) {
     uint8_t sq = vfo.sq.level;
@@ -453,46 +319,6 @@ public:
       sq++;
     }
     setSquelch(sq);
-  }
-
-  // TODO: бесшовное
-  void nextFreq(bool next) {
-    int8_t dir = next ? 1 : -1;
-
-    if (vfo.vfo.channel >= 0) {
-      nextCH(next);
-      return;
-    }
-
-    Band *nextBand = BAND_ByFrequency(vfo.f + dir);
-    if (nextBand != gCurrentBand && nextBand != &defaultBand) {
-      if (next) {
-        tuneTo(nextBand->band.bounds.start);
-      } else {
-        tuneTo(nextBand->band.bounds.end -
-               nextBand->band.bounds.end %
-                   StepFrequencyTable[nextBand->band.step]);
-      }
-    } else {
-      tuneTo(vfo.f + StepFrequencyTable[nextBand->band.step] * dir);
-    }
-    onVfoUpdate();
-  }
-
-  void nextBandFreq(bool next) {
-    uint32_t steps = BANDS_GetSteps(gCurrentBand);
-    uint32_t step = BANDS_GetChannel(gCurrentBand, vfo.f);
-    IncDec32(&step, 0, steps, next ? 1 : -1);
-    vfo.f = BANDS_GetF(gCurrentBand, step);
-    tuneToPure(vfo.f, true);
-  }
-
-  void nextBandFreqEx(bool next, bool precise) {
-    uint32_t steps = BANDS_GetSteps(gCurrentBand);
-    uint32_t step = BANDS_GetChannel(gCurrentBand, vfo.f);
-    IncDec32(&step, 0, steps, next ? 1 : -1);
-    vfo.f = BANDS_GetF(gCurrentBand, step);
-    tuneToPure(vfo.f, precise);
   }
 
 private:
