@@ -5,18 +5,20 @@
 #include "../driver/eeprom.hpp"
 #include "../driver/st7565.hpp"
 #include "../driver/system.hpp"
+#include "../svc/settings.hpp"
+#include "driver/battery.hpp"
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
 #include "radio.hpp"
-#include "settings.hpp"
 #include <stdint.h>
 #include <string.h>
 
 class Board {
 
 public:
+  static Battery battery;
   static EEPROM eeprom;
   static Radio radio;
   static ST7565 display;
@@ -31,6 +33,7 @@ public:
     initGpio();
     initAdc();
 
+    battery.init(settings.batteryType);
     display.init();
     radio.init();
   }

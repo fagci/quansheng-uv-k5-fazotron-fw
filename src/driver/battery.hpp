@@ -16,7 +16,7 @@ public:
 
   Battery(ADC *adc) : adc{adc} {}
 
-  const uint16_t Voltage2PercentageTable[][11][2] = {
+  constexpr static uint16_t Voltage2PercentageTable[][11][2] = {
       [BAT_1600] =
           {
               {840, 100},
@@ -62,22 +62,7 @@ public:
           },
   };
 
-  uint8_t voltsToPercent(const unsigned int voltage_10mV) {
-    const uint16_t(*crv)[2] = Voltage2PercentageTable[gSettings.batteryType];
-    const int mulipl = 1000;
-    for (uint8_t i = 1; i < ARRAY_SIZE(Voltage2PercentageTable[BAT_2200]);
-         i++) {
-      if (voltage_10mV > crv[i][0]) {
-        const int a =
-            (crv[i - 1][1] - crv[i][1]) * mulipl / (crv[i - 1][0] - crv[i][0]);
-        const int b = crv[i][1] - a * crv[i][0] / mulipl;
-        const int p = a * voltage_10mV / mulipl + b;
-        return p < 100 ? p : 100;
-      }
-    }
-
-    return 0;
-  }
+  void init(BatteryType type) { batteryType = type; }
 
   void getBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent) {
     adc->start();
@@ -99,7 +84,7 @@ public:
 
     batteryVoltage = (batAvgV * 760) / calibration;
     chargingWithTypeC = charg;
-    batteryPercent = voltsToPercent(batteryVoltage);
+    batteryPercent = voltsToPercent(batteryVoltage, batteryType);
   }
 
 private:
@@ -112,4 +97,23 @@ private:
   uint16_t batteryCurrent = 0;
   uint8_t batteryPercent = 0;
   bool chargingWithTypeC = true;
+  BatteryType batteryType;
+
+  static uint8_t voltsToPercent(const unsigned int voltage_10mV,
+                                BatteryType batteryType) {
+    const uint16_t(*crv)[2] = Voltage2PercentageTable[batteryType];
+    const int mulipl = 1000;
+    for (uint8_t i = 1; i < ARRAY_SIZE(Voltage2PercentageTable[BAT_2200]);
+         i++) {
+      if (voltage_10mV > crv[i][0]) {
+        const int a =
+            (crv[i - 1][1] - crv[i][1]) * mulipl / (crv[i - 1][0] - crv[i][0]);
+        const int b = crv[i][1] - a * crv[i][0] / mulipl;
+        const int p = a * voltage_10mV / mulipl + b;
+        return p < 100 ? p : 100;
+      }
+    }
+
+    return 0;
+  }
 };

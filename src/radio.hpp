@@ -9,7 +9,6 @@
 #include "driver/system.hpp"
 #include "frequency.hpp"
 #include "globals.hpp"
-#include "helper/battery.hpp"
 #include "helper/channels.hpp"
 #include "helper/lootlist.hpp"
 #include "helper/measurements.hpp"
@@ -234,60 +233,7 @@ public:
            (vfo->offsetDir == OFFSET_PLUS ? vfo->offset : -vfo->offset);
   }
 
-  static TXState getTXState(uint32_t txF) {
-    if (gSettings.upconverter) {
-      return TX_DISABLED_UPCONVERTER;
-    }
-
-    if (gSettings.allowTX == TX_DISALLOW) {
-      return TX_DISABLED;
-    }
-
-    if (gSettings.allowTX == TX_ALLOW_LPD_PMR && !FreqInRange(txF, &BAND_LPD) &&
-        !FreqInRange(txF, &BAND_PMR)) {
-      return TX_DISABLED;
-    }
-
-    if (gSettings.allowTX == TX_ALLOW_LPD_PMR_SATCOM &&
-        !FreqInRange(txF, &BAND_LPD) && !FreqInRange(txF, &BAND_PMR) &&
-        !FreqInRange(txF, &BAND_SATCOM)) {
-      return TX_DISABLED;
-    }
-
-    if (gSettings.allowTX == TX_ALLOW_HAM && !FreqInRange(txF, &BAND_HAM2M) &&
-        !FreqInRange(txF, &BAND_HAM70CM)) {
-      return TX_DISABLED;
-    }
-
-    if (gBatteryPercent == 0) {
-      return TX_BAT_LOW;
-    }
-    if (gChargingWithTypeC || gBatteryVoltage > 880) {
-      return TX_VOL_HIGH;
-    }
-
-    return TX_ON;
-  }
-
-  void toggleTX(bool on) {
-    if (gTxState == on) {
-      return;
-    }
-
-    uint8_t power = 0;
-    uint32_t txF = getTXFEx(&vfo);
-
-    if (on) {
-      gTxState = getTXState(txF);
-      power = calculateOutputPower(txF);
-      if (power > 0x91) {
-        power = 0;
-        gTxState = TX_POW_OVERDRIVE;
-        return;
-      }
-      power >>= 2 - vfo.power;
-    }
-
+  void toggleTX(bool on, uint32_t txF, uint8_t power) {
     if (on) {
       toggleRX(false);
 
@@ -304,7 +250,7 @@ public:
       bk4819.setupPowerAmplifier(power, txF);
       delayMs(10);
       bk4819.exitSubAu();
-    } else if (gTxState == TX_ON) {
+    } else {
       bk4819.exitDTMF_TX(true);
       enableCxCSS();
 
@@ -317,8 +263,6 @@ public:
     }
 
     bk4819.toggleGpioOut(BK4819_GPIO5_PIN1_RED, on);
-
-    gTxState = on;
   }
 
   void toggleBK1080(bool on) {
