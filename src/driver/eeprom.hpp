@@ -79,7 +79,7 @@ public:
     if (pBuffer == NULL) {
       return;
     }
-    const uint8_t PAGE_SIZE = EEPROM_PAGE_SIZES[eepromType];
+    const uint8_t PAGE_SIZE = PAGE_SIZES[eepromType];
 
     while (size) {
       uint32_t pageNum = address / PAGE_SIZE;
