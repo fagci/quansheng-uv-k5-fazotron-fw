@@ -10,6 +10,12 @@ public:
     UPCONVERTER_125M,
   } UpconverterTypes;
 
+  typedef struct {
+    uint8_t s : 8;
+    uint8_t m : 8;
+    uint8_t e : 8;
+  } __attribute__((packed)) PowerCalibration;
+
   EEPROM::Type eepromType : 3;
   uint8_t checkbyte : 5; // 1
   uint8_t scrambler : 4;

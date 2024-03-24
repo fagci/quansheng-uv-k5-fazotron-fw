@@ -9,7 +9,6 @@
 #include "driver/system.hpp"
 #include "frequency.hpp"
 #include "globals.hpp"
-#include "helper/channels.hpp"
 #include "helper/lootlist.hpp"
 #include "helper/measurements.hpp"
 #include "helpers/lootlist.hpp"
@@ -119,16 +118,6 @@ public:
                          filterNeeded == FILTER_UHF);
   }
 
-  uint8_t getBandIndex(uint32_t f) {
-    for (uint8_t i = 0; i < ARRAY_SIZE(STOCK_BANDS); ++i) {
-      const FRange *b = &STOCK_BANDS[i];
-      if (f >= b->start && f <= b->end) {
-        return i;
-      }
-    }
-    return 6;
-  }
-
   void onVfoUpdate() {
     TaskRemove(saveCurrentCH);
     TaskAdd("CH save", saveCurrentCH, 2000, false, 0);
@@ -156,29 +145,6 @@ public:
       delayMs(10);
       bk1080.mute(true);
     }
-  }
-
-  uint8_t calculateOutputPower(uint32_t f) {
-    const uint8_t bi = getBandIndex(f);
-    const FRange *range = &STOCK_BANDS[bi];
-    const PowerCalibration *pCal = &gSettings.powCalib[bi];
-    const uint32_t Middle = range->start + (range->end - range->start) / 2;
-
-    if (f <= range->start) {
-      return pCal->s;
-    }
-
-    if (f >= range->end) {
-      return pCal->e;
-    }
-
-    if (f <= Middle) {
-      return (uint8_t)(pCal->m + (((pCal->m - pCal->s) * (f - range->start)) /
-                                  (Middle - range->start)));
-    }
-
-    return (uint8_t)(pCal->m + (((pCal->e - pCal->m) * (f - Middle)) /
-                                (range->end - Middle)));
   }
 
   bool isBK1080Range(uint32_t f) { return f >= 6400000 && f <= 10800000; }

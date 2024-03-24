@@ -134,12 +134,6 @@ typedef struct {
 } App;
 
 typedef struct {
-  uint8_t s : 8;
-  uint8_t m : 8;
-  uint8_t e : 8;
-} __attribute__((packed)) PowerCalibration;
-
-typedef struct {
   char name[10];
 } __attribute__((packed)) Scanlist;
 
