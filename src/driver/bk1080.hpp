@@ -24,7 +24,7 @@ public:
     BK1080_CHSP_50,
   } BK1080_ChannelSpacing;
 
-  uint32_t getF() {}
+  uint32_t getF() { return currentF; }
 
   uint8_t getNoise() { return 0; }
   uint8_t getGlitch() { return 0; }
@@ -42,6 +42,8 @@ public:
     delayMs(60);
     isInitBK1080 = true;
   }
+
+  bool inRange(uint32_t f) { return f >= 6400000 && f <= 10800000; }
 
   void rxEnable() {
     mute(false);

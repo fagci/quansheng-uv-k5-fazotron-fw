@@ -35,6 +35,7 @@ public:
   virtual void init() = 0;
 
   virtual void setF(uint32_t f) = 0;
+  virtual bool inRange(uint32_t f) = 0;
   virtual uint32_t getF() = 0;
 
   virtual uint16_t getRSSI() = 0;

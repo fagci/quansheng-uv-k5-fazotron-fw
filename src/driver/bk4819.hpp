@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../frequency.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../inc/dp32g030/portcon.h"
 #include "../misc.hpp"
@@ -74,8 +75,7 @@ const Gain gainTable[19] = {
 class BK4819 : public AbstractRadio {
 
 public:
-  static constexpr uint32_t F_MIN = 1600000;
-  static constexpr uint32_t F_MAX = 134000000;
+  static constexpr Frequency::Range BOUNDS = {1600000, 134000000};
 
   typedef enum AF_Type_t {
     AF_MUTE,
@@ -189,6 +189,7 @@ public:
     toggleAFDAC(!mute);
     toggleAFBit(!mute);
   }
+  bool inRange(uint32_t f) { return BK4819::BOUNDS.contains(f); }
 
   void getVoxAmp(uint16_t *pResult) {
     *pResult = readRegister(BK4819_REG_64) & 0x7FFF;

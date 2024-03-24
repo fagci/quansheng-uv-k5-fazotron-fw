@@ -6,19 +6,18 @@
 
 class Frequency {
 public:
-  typedef struct Range {
-    uint32_t start : 27;
-    uint32_t end : 27;
-    bool contains(uint32_t f) { return f >= start && f <= end; }
-  } __attribute__((packed)) Range;
+  class Range {
+  public:
+    const uint32_t start : 27;
+    const uint32_t end : 27;
+    bool contains(const uint32_t f) const { return f >= start && f <= end; }
+  } __attribute__((packed));
 
   constexpr static uint16_t StepFrequencyTable[12] = {
       1, 10, 100, 250, 500, 625, 833, 900, 1000, 1250, 2500, 10000,
   };
 
-  static bool inRange(uint32_t f, const Range *r) {
-    return f >= r->start && f <= r->end;
-  }
+  static bool inRange(uint32_t f, Range *r) { return r->contains(f); }
 };
 
 class Band {

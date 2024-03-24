@@ -49,28 +49,21 @@ public:
   } __attribute__((packed)) SquelchSettings;
   // getsize(SquelchSettings)
 
-  typedef struct VFO {
-    AppType_t app;
-    int16_t channel;
-    ScanSettings scan;
-    Step step : 4;
-    uint32_t f : 27;
-    uint32_t offset : 27;
-    OffsetDirection offsetDir;
-    ModulationType modulation : 4;
-    FilterBandwidth bw : 2;
-    TXOutputPower power : 2;
-    uint8_t codeRX;
-    uint8_t codeTX;
-    uint8_t codeTypeRX : 4;
-    uint8_t codeTypeTX : 4;
-    SquelchSettings sq;
-    uint8_t gainIndex : 5;
-
-    uint32_t getStep() { return StepFrequencyTable[step]; }
-  } __attribute__((packed)) VFO;
-
-  VFO vfo;
+  int16_t channel;
+  ScanSettings scan;
+  Step step : 4;
+  uint32_t f : 27;
+  uint32_t offset : 27;
+  OffsetDirection offsetDir;
+  ModulationType modulation : 4;
+  FilterBandwidth bw : 2;
+  TXOutputPower power : 2;
+  uint8_t codeRX;
+  uint8_t codeTX;
+  uint8_t codeTypeRX : 4;
+  uint8_t codeTypeTX : 4;
+  SquelchSettings sq;
+  uint8_t gainIndex : 5;
 
   void init() {
     bk4819.init();
@@ -79,7 +72,7 @@ public:
     mainRadio = &bk4819;
   }
 
-  void setF(uint32_t f) { mainRadio->setF(f); }
+  void setF(uint32_t freq) { mainRadio->setF(freq); }
   void rxEnable() { mainRadio->rxEnable(); }
   void idle() { mainRadio->idle(); }
   void resetRSSI() {
@@ -91,9 +84,10 @@ public:
   TXState getTxState() { return gTxState; }
   void squelch(uint8_t level) {
     if (mainRadio == &bk4819) {
-      bk4819.squelch(level, vfo.f);
+      bk4819.squelch(level, f);
     }
   }
+  uint32_t getStep() { return StepFrequencyTable[step]; }
 
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
@@ -131,7 +125,6 @@ public:
     }
   }
 
-  bool isBK1080Range(uint32_t f) { return f >= 6400000 && f <= 10800000; }
 
   void toggleRX(bool on) {
     if (gIsListening == on) {
@@ -308,8 +301,6 @@ public:
     bk4819.writeRegister(BK4819_REG_3F, BK4819_REG_3F_CxCSS_TAIL);
   }
 
-  uint8_t getActiveVFOGroup() { return vfo.groups; }
-
   void updateSquelchLevel(bool next) {
     uint8_t sq = vfo.sq.level;
     if (!next && sq > 0) {
@@ -333,4 +324,4 @@ private:
 
   TXState gTxState = TX_UNKNOWN;
   Filter selectedFilter = FILTER_OFF;
-};
+} __attribute__((packed));
