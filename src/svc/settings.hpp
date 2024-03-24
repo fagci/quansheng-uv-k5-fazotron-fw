@@ -3,8 +3,7 @@
 #include "../driver/eeprom.hpp"
 #include <stdint.h>
 
-class SettingsService {
-public:
+struct Settings {
   typedef enum {
     UPCONVERTER_OFF,
     UPCONVERTER_50M,
@@ -77,11 +76,18 @@ public:
   PowerCalibration powCalib[12];
   AllowTX allowTX;
 
+  void save() {
+    eeprom->writeBuffer(0, this, sizeof(*this));
+  } // FIXME: private members also counts
+
+  void load() {
+    eeprom->readBuffer(0, this, sizeof(*this));
+  } // FIXME: private members also counts
+};
+
+class SettingsService : Settings {
+public:
   SettingsService(EEPROM *e) : eeprom{e} {}
-
-  void save() { eeprom->writeBuffer(0, this, sizeof(*this)); } // FIXME: private members also counts
-
-  void load() { eeprom->readBuffer(0, this, sizeof(*this)); } // FIXME: private members also counts
 
   void delayedSave() {
     TaskRemove(save);
