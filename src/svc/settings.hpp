@@ -1,4 +1,5 @@
 #pragma once
+#include "../driver/battery.hpp"
 #include "../driver/eeprom.hpp"
 #include <stdint.h>
 
@@ -9,6 +10,26 @@ public:
     UPCONVERTER_50M,
     UPCONVERTER_125M,
   } UpconverterTypes;
+
+  typedef enum {
+    BAT_CLEAN,
+    BAT_PERCENT,
+    BAT_VOLTAGE,
+  } BatteryStyle;
+
+  typedef enum {
+    BL_SQL_OFF,
+    BL_SQL_ON,
+    BL_SQL_OPEN,
+  } BacklightOnSquelchMode;
+
+  typedef enum {
+    TX_DISALLOW,
+    TX_ALLOW_LPD_PMR,
+    TX_ALLOW_LPD_PMR_SATCOM,
+    TX_ALLOW_HAM,
+    TX_ALLOW_ALL,
+  } AllowTX;
 
   typedef struct {
     uint8_t s : 8;
@@ -44,7 +65,7 @@ public:
   int8_t activeBand : 8; // 10
   uint16_t batteryCalibration : 12;
   uint8_t contrast : 4; // 12
-  BatteryType batteryType : 2;
+  Battery::Type batteryType : 2;
   BatteryStyle batteryStyle : 2;
   bool bound_240_280 : 1;
   bool noListen : 1;
@@ -55,6 +76,7 @@ public:
   char nickName[10];
   PowerCalibration powCalib[12];
   AllowTX allowTX;
+
   SettingsService(EEPROM *e) : eeprom{e} {}
 
   void save() {
@@ -64,17 +86,15 @@ public:
   void load() { EEPROM_ReadBuffer(SETTINGS_OFFSET, &gSettings, SETTINGS_SIZE); }
 
   void delayedSave() {
-    TaskRemove(SETTINGS_Save);
-    TaskAdd("Settings save", SETTINGS_Save, 5000, false, 0);
+    TaskRemove(save);
+    TaskAdd("Settings save", save, 5000, false, 0);
   }
 
-  uint32_t getFilterBound() {
-    return gSettings.bound_240_280 ? VHF_UHF_BOUND2 : VHF_UHF_BOUND1;
-  }
+  uint32_t getFilterBound() { return bound_240_280 ? 28000000 : 24000000; }
 
-  uint32_t getEEPROMSize() { return EEPROM_SIZES[gSettings.eepromType]; }
+  uint32_t getEEPROMSize() { return EEPROM::SIZES[eepromType]; }
 
-  uint8_t getPageSize() { return EEPROM_PAGE_SIZES[gSettings.eepromType]; }
+  uint8_t getPageSize() { return EEPROM::PAGE_SIZES[eepromType]; }
 
 private:
   EEPROM *eeprom;

@@ -21,7 +21,7 @@ public:
     EEPROM_M24M02,    // 111
   } Type;
 
-  constexpr static uint32_t EEPROM_SIZES[8] = {
+  constexpr static uint32_t SIZES[8] = {
       8192,   // 000
       8192,   // 001
       8192,   // 010
@@ -32,7 +32,7 @@ public:
       262144, // 111
   };
 
-  constexpr static uint8_t EEPROM_PAGE_SIZES[8] = {
+  constexpr static uint8_t PAGE_SIZES[8] = {
       32,  // 000
       32,  // 001
       32,  // 010

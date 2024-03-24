@@ -60,30 +60,10 @@ typedef enum {
 } OffsetDirection;
 
 typedef enum {
-  BL_SQL_OFF,
-  BL_SQL_ON,
-  BL_SQL_OPEN,
-} BacklightOnSquelchMode;
-
-typedef enum {
-  BAT_CLEAN,
-  BAT_PERCENT,
-  BAT_VOLTAGE,
-} BatteryStyle;
-
-typedef enum {
   TX_POW_LOW,
   TX_POW_MID,
   TX_POW_HIGH,
 } TXOutputPower;
-
-typedef enum {
-  TX_DISALLOW,
-  TX_ALLOW_LPD_PMR,
-  TX_ALLOW_LPD_PMR_SATCOM,
-  TX_ALLOW_HAM,
-  TX_ALLOW_ALL,
-} AllowTX;
 
 typedef enum {
   TX_UNKNOWN,

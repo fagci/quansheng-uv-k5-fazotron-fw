@@ -12,7 +12,7 @@ public:
     BAT_1600,
     BAT_2200,
     BAT_3500,
-  } BatteryType;
+  } Type;
 
   Battery(ADC *adc) : adc{adc} {}
 
@@ -62,7 +62,7 @@ public:
           },
   };
 
-  void init(BatteryType type) { batteryType = type; }
+  void init(Type type) { batteryType = type; }
 
   void getBatteryInfo(uint16_t *pVoltage, uint16_t *pCurrent) {
     adc->start();
@@ -97,10 +97,10 @@ private:
   uint16_t batteryCurrent = 0;
   uint8_t batteryPercent = 0;
   bool chargingWithTypeC = true;
-  BatteryType batteryType;
+  Type batteryType;
 
   static uint8_t voltsToPercent(const unsigned int voltage_10mV,
-                                BatteryType batteryType) {
+                                Type batteryType) {
     const uint16_t(*crv)[2] = Voltage2PercentageTable[batteryType];
     const int mulipl = 1000;
     for (uint8_t i = 1; i < ARRAY_SIZE(Voltage2PercentageTable[BAT_2200]);
