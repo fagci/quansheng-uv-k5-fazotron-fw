@@ -71,7 +71,7 @@ void SP_ResetPoint() {
   }
 }
 
-void SP_Render(FRange *p, uint8_t sx, uint8_t sy, uint8_t sh) {
+void SP_Render(Range *p, uint8_t sx, uint8_t sy, uint8_t sh) {
   const uint8_t S_BOTTOM = sy + sh;
   const uint16_t rssiMin = Min(rssiHistory, filledPoints);
   const uint16_t rssiMax = Max(rssiHistory, filledPoints);

@@ -74,7 +74,7 @@ void drawTicks(uint8_t x1, uint8_t x2, uint8_t y, uint32_t fs, uint32_t fe,
   }
 }
 
-void UI_DrawTicks(uint8_t x1, uint8_t x2, uint8_t y, FRange *range) {
+void UI_DrawTicks(uint8_t x1, uint8_t x2, uint8_t y, Range *range) {
   // TODO: automatic ticks size determination
 
   uint32_t fs = range->start;
