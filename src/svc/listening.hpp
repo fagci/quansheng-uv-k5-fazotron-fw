@@ -5,9 +5,10 @@
 
 class ListenService {
 public:
-  ListenService(SettingsService *s, Radio *r) : gSettings(s), radio{r} {}
-
-  void init() { radio->rxEnable(); }
+  ListenService(SettingsService *s, Radio *r) : gSettings(s), radio{r} {
+    radio->squelch(radio->vfo.sq.level);
+    radio->rxEnable();
+  }
 
   void update() {
     rssi = radio->getRSSI();

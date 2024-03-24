@@ -8,7 +8,7 @@
 
 class Audio {
 public:
-  bool speakerOn = false;
+  Audio(BK4819 *bk) : bk4819(bk) {}
 
   void toggleSpeaker(bool on) {
     speakerOn = on;
@@ -21,30 +21,34 @@ public:
 
   void playTone(uint32_t frequency, uint16_t duration) {
     bool isSpeakerWasOn = speakerOn;
-    uint16_t ToneConfig = BK4819_ReadRegister(BK4819_REG_71);
+    uint16_t ToneConfig = bk4819->readRegister(BK4819_REG_71);
 
     toggleSpeaker(false);
     // BK4819_RX_TurnOn();
 
     delayMs(20);
-    BK4819_PlayTone(frequency, true);
+    bk4819->playTone(frequency, true);
     delayMs(2);
 
     toggleSpeaker(true);
     delayMs(60);
 
-    BK4819_ExitTxMute();
+    bk4819->exitTxMute();
     delayMs(duration);
-    BK4819_EnterTxMute();
+    bk4819->enterTxMute();
 
     delayMs(20);
     toggleSpeaker(false);
 
     delayMs(5);
-    BK4819_TurnsOffTones_TurnsOnRX();
+    bk4819->turnsOffTones_TurnsOnRX();
     delayMs(5);
 
-    BK4819_WriteRegister(BK4819_REG_71, ToneConfig);
+    bk4819->writeRegister(BK4819_REG_71, ToneConfig);
     toggleSpeaker(isSpeakerWasOn);
   }
+
+private:
+  bool speakerOn = false;
+  BK4819 *bk4819;
 };

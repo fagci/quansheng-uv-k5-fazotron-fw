@@ -260,16 +260,14 @@ public:
                     uint8_t SquelchOpenNoiseThresh,
                     uint8_t SquelchCloseNoiseThresh,
                     uint8_t SquelchCloseGlitchThresh,
-                    uint8_t SquelchOpenGlitchThresh, uint8_t OpenDelay,
-                    uint8_t CloseDelay) {
+                    uint8_t SquelchOpenGlitchThresh) {
     writeRegister(BK4819_REG_70, 0);
     writeRegister(BK4819_REG_4D, 0xA000 | SquelchCloseGlitchThresh);
-    writeRegister(
-        BK4819_REG_4E,
-        (1u << 14) |                      //  1 ???
-            (uint16_t)(OpenDelay << 11) | // *5  squelch = open  delay .. 0 ~ 7
-            (uint16_t)(CloseDelay << 9) | // *3  squelch = close delay .. 0 ~ 3
-            SquelchOpenGlitchThresh);
+    writeRegister(BK4819_REG_4E,
+                  (1u << 14) |                         // 1 ???
+                      (uint16_t)(sqlOpenDelay << 11) | // 0..7
+                      (uint16_t)(sqlCloseDelay << 9) | // 0..3
+                      SquelchOpenGlitchThresh);
     writeRegister(BK4819_REG_4F,
                   (SquelchCloseNoiseThresh << 8) | SquelchOpenNoiseThresh);
     writeRegister(BK4819_REG_78,
@@ -281,11 +279,10 @@ public:
     // setAF(modTypeCurrent);
   }
 
-  void squelch(uint8_t sql, uint32_t f, uint8_t OpenDelay, uint8_t CloseDelay) {
+  void squelch(uint8_t sql, uint32_t f) {
     uint8_t band = f > VHF_UHF_BOUND2 ? 1 : 0; // TODO: use user defined bound?
     setupSquelch(SQ[band][0][sql], SQ[band][1][sql], SQ[band][2][sql],
-                 SQ[band][3][sql], SQ[band][4][sql], SQ[band][5][sql],
-                 OpenDelay, CloseDelay);
+                 SQ[band][3][sql], SQ[band][4][sql], SQ[band][5][sql]);
   }
 
   void squelchType(SquelchType t) {
@@ -881,6 +878,41 @@ public:
     writeRegister(s.num, reg | (v << s.offset));
   }
 
+  uint16_t readRegister(BK4819_REGISTER_t Register) {
+    uint16_t Value;
+
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
+    delayUs(1);
+    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+
+    writeU8(Register | 0x80);
+
+    Value = readU16();
+
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+    delayUs(1);
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
+
+    return Value;
+  }
+
+  void writeRegister(BK4819_REGISTER_t Register, uint16_t Data) {
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
+    delayUs(1);
+    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+    writeU8(Register);
+    delayUs(1);
+    writeU16(Data);
+    delayUs(1);
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
+    delayUs(1);
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
+    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
+  }
+
 private:
   void writeU8(uint8_t Data) {
     uint8_t i;
@@ -943,41 +975,9 @@ private:
     }
   }
 
-  uint16_t readRegister(BK4819_REGISTER_t Register) {
-    uint16_t Value;
-
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    delayUs(1);
-    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-
-    writeU8(Register | 0x80);
-
-    Value = readU16();
-
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    delayUs(1);
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
-
-    return Value;
-  }
-
-  void writeRegister(BK4819_REGISTER_t Register, uint16_t Data) {
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    delayUs(1);
-    GPIO_ClearBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    writeU8(Register);
-    delayUs(1);
-    writeU16(Data);
-    delayUs(1);
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCN);
-    delayUs(1);
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SCL);
-    GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_BK4819_SDA);
-  }
-
   uint16_t gBK4819_GpioOutState;
   uint8_t modTypeCurrent = 255;
+
+  uint8_t sqlOpenDelay = 0;
+  uint8_t sqlCloseDelay = 0;
 };
