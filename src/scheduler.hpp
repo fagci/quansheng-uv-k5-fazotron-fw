@@ -106,29 +106,6 @@ public:
     }
   }
 
-  void SystickHandler() {
-    Task *task;
-    for (uint8_t i = 0; i < tasksCount; ++i) {
-      task = &tasks[i];
-      if (task->active && task->handler && task->countdown) {
-        --task->countdown;
-      }
-    }
-    elapsedMilliseconds++;
-  }
-
-  uint32_t Now() { return elapsedMilliseconds; }
-
-  void SetTimeout(uint32_t *v, uint32_t t) {
-    uint32_t max = (uint32_t)0 - 1;
-    if (t == max) {
-      *v = max;
-      return;
-    }
-    *v = Now() + t;
-  }
-
-  bool CheckTimeout(uint32_t *v) { return Now() >= *v; }
 
 private:
   uint8_t tasksCount = 0;

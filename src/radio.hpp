@@ -101,6 +101,7 @@ public:
     }
   }
   bool isSquelchOpen() { return mainRadio->isSquelchOpen(); }
+  TXState getTxState() { return gTxState; }
 
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
@@ -586,7 +587,6 @@ private:
   AbstractRadio *mainRadio;
 
   bool gIsListening = false;
-  bool gMonitorMode = false;
 
   bool gIsBK1080 = false;
 

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../radio.hpp"
+#include "settings.hpp"
 
 class ListenService {
 public:
-  ListenService(Radio *r) : radio{r} {}
+  ListenService(SettingsService *s, Radio *r) : gSettings(s), radio{r} {}
 
   void init() { radio->rxEnable(); }
 
@@ -18,7 +19,7 @@ public:
     }
 
     bool rx = msm->open;
-    if (gTxState != TX_ON) {
+    if (radio->getTxState() != TX_ON) {
       if (gMonitorMode) {
         rx = true;
       } else if (gSettings.noListen && (gCurrentApp->id == APP_SPECTRUM ||
@@ -69,10 +70,14 @@ public:
   Loot *updateMeasurements() { return msm; }
 
   void deinit() { radio->idle(); }
+  void toggleMonitorMode() { gMonitorMode = !gMonitorMode; }
 
 private:
+  SettingsService *gSettings;
+  Loot *msm;
   Radio *radio;
   uint32_t lastTailTone = 0;
   uint16_t rssi = 0;
   bool isListening = false;
+  bool gMonitorMode = false;
 };

@@ -5,12 +5,11 @@ extern "C" {
 #include "../inc/dp32g030/pmu.h"
 #include "../inc/dp32g030/syscon.h"
 #include <stdint.h>
-// #include "misc.h"
 }
 
 #define CPU_CLOCK_HZ 48000000
 
-extern void SYSTEM_ConfigureClocks() {
+static void SYSTEM_ConfigureClocks() {
   // Set source clock from external crystal
   PMU_SRC_CFG =
       (PMU_SRC_CFG & ~(PMU_SRC_CFG_RCHF_SEL_MASK | PMU_SRC_CFG_RCHF_EN_MASK)) |
@@ -25,7 +24,7 @@ extern void SYSTEM_ConfigureClocks() {
       SYSCON_DIV_CLK_GATE_DIV_CLK_GATE_BITS_DISABLE;
 }
 
-extern void SYSTEM_ConfigureSysCon() {
+static void SYSTEM_ConfigureSysCon() {
   // Enable clock gating of blocks we need.
   SYSCON_DEV_CLK_GATE = 0 | SYSCON_DEV_CLK_GATE_GPIOA_BITS_ENABLE |
                         SYSCON_DEV_CLK_GATE_GPIOB_BITS_ENABLE |
@@ -38,9 +37,12 @@ extern void SYSTEM_ConfigureSysCon() {
                         SYSCON_DEV_CLK_GATE_PWM_PLUS0_BITS_ENABLE;
 }
 
-extern const uint32_t tickMultiplier = 48;
+static const uint32_t tickMultiplier = 48;
 
-extern void SYSTICK_Init() { SysTick_Config(48000); }
+extern void SYSTICK_Init() {
+  SysTick_Config(48000);
+  SYSTEM_ConfigureSysCon();
+}
 
 extern void delayUs(uint32_t Delay) {
   uint32_t i;
@@ -67,3 +69,27 @@ extern void delayUs(uint32_t Delay) {
 }
 
 extern void delayMs(uint32_t Delay) { delayUs(Delay * 1000); }
+
+extern "C" void SystickHandler() {
+  Task *task;
+  for (uint8_t i = 0; i < tasksCount; ++i) {
+    task = &tasks[i];
+    if (task->active && task->handler && task->countdown) {
+      --task->countdown;
+    }
+  }
+  elapsedMilliseconds++;
+}
+
+extern uint32_t Now() { return elapsedMilliseconds; }
+
+extern void SetTimeout(uint32_t *v, uint32_t t) {
+  uint32_t max = (uint32_t)0 - 1;
+  if (t == max) {
+    *v = max;
+    return;
+  }
+  *v = Now() + t;
+}
+
+extern bool CheckTimeout(uint32_t *v) { return Now() >= *v; }
