@@ -91,6 +91,15 @@ public:
   }
   uint32_t getStep() { return StepFrequencyTable[step]; }
 
+  virtual bool inRange(uint32_t f) { return mainRadio->inRange(f); }
+
+  virtual uint16_t getRSSI() { return mainRadio->getRSSI(); }
+  virtual uint8_t getNoise() { return mainRadio->getNoise(); }
+  virtual uint8_t getGlitch() { return mainRadio->getGlitch(); }
+  virtual uint8_t getSNR() { return mainRadio->getSNR(); }
+
+  virtual void mute(bool m) { mainRadio->mute(m); }
+
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
       return;

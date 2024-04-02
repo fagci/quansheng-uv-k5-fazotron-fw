@@ -2,6 +2,7 @@
 
 #include "../../driver/battery.hpp"
 #include "../../driver/eeprom.hpp"
+#include "../../radio.hpp"
 #include <stdint.h>
 
 typedef enum {
@@ -77,5 +78,7 @@ struct Settings {
   PowerCalibration powCalib[12];
   AllowTX allowTX;
 
-  uint32_t getFilterBound() { return bound_240_280 ? 28000000 : 24000000; }
+  uint32_t getFilterBound() {
+    return bound_240_280 ? Radio::VHF_UHF_BOUND2 : Radio::VHF_UHF_BOUND1;
+  }
 };

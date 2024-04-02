@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../lib/enum.hpp"
 #include <stdint.h>
 
 class AbstractRadio {

@@ -13,17 +13,16 @@
 #include "inc/dp32g030/syscon.h"
 #include "lib/struct/settings.hpp"
 #include "radio.hpp"
-#include <stdint.h>
-#include <string.h>
 
 class Board {
 
 public:
-  static Battery battery;
+  static ADC adc;
   static Settings settings;
-  static Radio radio;
   static ST7565 display;
+  static Battery battery;
   static Audio audio;
+  static Radio radio;
 
   void init() {
     SYSTICK_Init();
@@ -401,10 +400,10 @@ private:
   }
 
   void initAdc() {
-    ADC_Config_t Config;
+    ADC::ADC_Config_t Config;
 
     Config.CLK_SEL = SYSCON_CLK_SEL_W_SARADC_SMPL_VALUE_DIV2;
-    Config.CH_SEL = (ADC_CH_MASK)(ADC_CH4 | ADC_CH9);
+    Config.CH_SEL = (ADC::ADC_CH_MASK)(ADC::ADC_CH4 | ADC::ADC_CH9);
     Config.AVG = SARADC_CFG_AVG_VALUE_8_SAMPLE;
     Config.CONT = SARADC_CFG_CONT_VALUE_SINGLE;
     Config.MEM_MODE = SARADC_CFG_MEM_MODE_VALUE_CHANNEL;
@@ -418,8 +417,8 @@ private:
     Config.IE_CHx_EOC = SARADC_IE_CHx_EOC_VALUE_NONE;
     Config.IE_FIFO_FULL = SARADC_IE_FIFO_FULL_VALUE_DISABLE;
     Config.IE_FIFO_HFULL = SARADC_IE_FIFO_HFULL_VALUE_DISABLE;
-    ADC_Configure(&Config);
-    ADC_Enable();
-    ADC_SoftReset();
+    adc.configure(&Config);
+    adc.enable();
+    adc.softReset();
   }
 };
