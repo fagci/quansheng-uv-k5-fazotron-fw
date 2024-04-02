@@ -10,7 +10,7 @@
 } */
 
 extern "C" int Main(void) {
-  static Svc serviceManager;
+  Svc::setupServices();
   while (true) {
     Scheduler::tasksUpdate();
   }

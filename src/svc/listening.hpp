@@ -2,9 +2,9 @@
 
 #include "../board.hpp"
 #include "../frequency.hpp"
-#include "../svc/svc.hpp"
+#include "svc.hpp"
 
-class ListenService {
+class ListenService : public Svc {
 public:
   void update() {
     rssi = Board::radio.getRSSI();

@@ -2,13 +2,11 @@
 
 #include "../board.hpp"
 #include "../driver/st7565.hpp"
-#include "../svc/svc.hpp"
+#include "svc.hpp"
 #include <stdint.h>
 
-class BacklightService {
+class BacklightService : Svc {
 public:
-  BacklightService(ST7565 *d) : display{d} {}
-
   void setDuration(uint8_t durationSec) {
     duration = durationSec;
     countdown = durationSec;

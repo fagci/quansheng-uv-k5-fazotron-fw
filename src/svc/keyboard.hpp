@@ -1,17 +1,13 @@
 #pragma once
 
 #include "../apps/apps.hpp"
-#include "../driver/audio.hpp"
 #include "../driver/backlight.hpp"
 #include "../driver/gpio.hpp"
 #include "../driver/keyboard.hpp"
-#include "../driver/st7565.hpp"
 #include "../inc/dp32g030/gpio.h"
 #include "../scheduler.hpp"
-#include "../settings.hpp"
 #include "backlight.hpp"
 #include "svc.hpp"
-#include <stdint.h>
 
 class KeyboardService : public Svc {
 public:
@@ -33,7 +29,7 @@ public:
     // - keyup hold (hold && !pressed)
     if ((hold || !pressed) && APPS_key(key, pressed, hold)) {
       if (Board::settings.beep)
-        AUDIO_PlayTone(1000, 20);
+        Board::audio.playTone(1000, 20);
       render.schedule();
       return;
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "driver/adc.hpp"
+#include "driver/audio.hpp"
 #include "driver/backlight.hpp"
 #include "driver/battery.hpp"
 #include "driver/eeprom.hpp"
@@ -22,6 +23,7 @@ public:
   static Settings settings;
   static Radio radio;
   static ST7565 display;
+  static Audio audio;
 
   void init() {
     SYSTICK_Init();
