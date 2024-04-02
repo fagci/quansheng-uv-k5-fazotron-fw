@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../board.hpp"
 #include "../driver/st7565.hpp"
+#include "../svc/svc.hpp"
 #include <stdint.h>
 
 class BacklightService {
@@ -28,7 +30,7 @@ public:
   void toggle(bool on) {
     if (state != on) {
       state = on;
-      display->setBrightness(on ? brightness : 0);
+      Board::display.setBrightness(on ? brightness : 0);
     }
   }
 
@@ -39,8 +41,19 @@ public:
     toggle(countdown);
   }
 
+  void toggleSquelch(bool on) {
+    if (on) {
+      if (Board::settings.backlightOnSquelch != BL_SQL_OFF) {
+        Svc::backlight.on();
+      }
+    } else {
+      if (Board::settings.backlightOnSquelch == BL_SQL_OPEN) {
+        Svc::backlight.toggle(false);
+      }
+    }
+  }
+
 private:
-  ST7565 *display;
   uint8_t duration = 2;
   uint8_t countdown;
   bool state = false;

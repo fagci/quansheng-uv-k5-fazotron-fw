@@ -43,9 +43,9 @@ public:
       128, // 111
   };
 
-  void init(Type t) { eepromType = t; }
+  static void setType(Type t) { eepromType = t; }
 
-  void readBuffer(uint32_t address, void *pBuffer, uint8_t size) {
+  static void readBuffer(uint32_t address, void *pBuffer, uint8_t size) {
     uint8_t IIC_ADD = (uint8_t)(0xA0 | ((address / 0x10000) << 1));
 
     if (eepromType == EEPROM_M24M02) {
@@ -75,7 +75,7 @@ public:
   }
 
   // static uint8_t tmpBuffer[256];
-  void writeBuffer(uint32_t address, void *pBuffer, uint8_t size) {
+  static void writeBuffer(uint32_t address, void *pBuffer, uint8_t size) {
     if (pBuffer == NULL) {
       return;
     }
@@ -118,8 +118,12 @@ public:
     }
   }
 
+  static uint32_t getSize() { return SIZES[eepromType]; }
+
+  static uint8_t getPageSize() { return PAGE_SIZES[eepromType]; }
+
 private:
-  bool gEepromWrite = false;
-  bool gEepromRead = false;
-  Type eepromType = EEPROM_BL24C64;
+  static bool gEepromWrite;
+  static bool gEepromRead;
+  static inline Type eepromType = EEPROM_BL24C64;
 };

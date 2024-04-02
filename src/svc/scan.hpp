@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../driver/uart.hpp"
-#include "../scheduler.hpp"
+#include "../radio.hpp"
+#include "listening.hpp"
+#include "svc.hpp"
+#include "tune.hpp"
 
 class ScanService {
   class CallbackFunctor {
@@ -10,10 +13,10 @@ class ScanService {
   };
 
 public:
-  static void next() {
+  void next() {
     lastListenState = false;
     gScanFn(gScanForward);
-    lastSettedF = radio->f;
+    lastSettedF = ServiceManager::board.radio->getF();
     SetTimeout(&timeout, radio->vfo.scan.timeout);
     if (gScanRedraw) {
       gRedrawScreen = true;
@@ -25,18 +28,18 @@ public:
     Log("SCAN init, SF:%u", !!gScanFn);
     if (!gScanFn) {
       if (radio->vfo.channel >= 0) {
-        gScanFn = RADIO_NextCH;
+        gScanFn = ServiceManager::tuneService.nextCH;
       } else {
-        gScanFn = RADIO_NextBandFreq;
+        gScanFn = tuneService->nextBandFreq;
       }
     }
     next();
   }
 
   void update() {
-    if (lastListenState != gIsListening) {
-      lastListenState = gIsListening;
-      SetTimeout(&timeout, gIsListening
+    if (lastListenState != listenService->isListening()) {
+      lastListenState = listenService->isListening();
+      SetTimeout(&timeout, lastListenState
                                ? SCAN_TIMEOUTS[radio->vfo.scan.openedTimeout]
                                : SCAN_TIMEOUTS[radio->vfo.scan.closedTimeout]);
     }
@@ -46,7 +49,7 @@ public:
       return;
     }
 
-    if (lastSettedF != radio->f) {
+    if (lastSettedF != radio->getF()) {
       SetTimeout(&timeout, 0);
     }
   }
@@ -75,14 +78,14 @@ private:
       ((uint32_t)0) - 1,
   };
 
-  char *SCAN_TIMEOUT_NAMES[11] = {
+  static constexpr char *SCAN_TIMEOUT_NAMES[11] = {
       "0",   "500ms", "1s",   "2s",   "5s",   "10s",
       "30s", "1min",  "2min", "5min", "None",
   };
 
-  static uint32_t lastSettedF = 0;
-  static uint32_t timeout = 0;
-  static bool lastListenState = false;
+  uint32_t lastSettedF = 0;
+  uint32_t timeout = 0;
+  bool lastListenState = false;
 
   void (*gScanFn)(bool) = NULL;
 };

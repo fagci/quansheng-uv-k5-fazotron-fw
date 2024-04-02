@@ -1,15 +1,12 @@
 #pragma once
 
+#include "../board.hpp"
 #include "../inc/dp32g030/gpio.h"
-#include "bk4819.hpp"
 #include "gpio.hpp"
-#include "system.hpp"
 #include <stdint.h>
 
 class Audio {
 public:
-  Audio(BK4819 *bk) : bk4819(bk) {}
-
   static void toggleSpeaker(bool on) {
     if (on) {
       GPIO_SetBit(&GPIOC->DATA, GPIOC_PIN_AUDIO_PATH);
@@ -24,33 +21,30 @@ public:
 
   void playTone(uint32_t frequency, uint16_t duration) {
     bool isSpeakerWasOn = isSpeakerOn();
-    uint16_t ToneConfig = bk4819->readRegister(BK4819_REG_71);
+    uint16_t ToneConfig = Board::radio.readRegister(BK4819_REG_71);
 
     toggleSpeaker(false);
     // BK4819_RX_TurnOn();
 
     delayMs(20);
-    bk4819->playTone(frequency, true);
+    Board::radio.playTone(frequency, true);
     delayMs(2);
 
     toggleSpeaker(true);
     delayMs(60);
 
-    bk4819->exitTxMute();
+    Board::radio.exitTxMute();
     delayMs(duration);
-    bk4819->enterTxMute();
+    Board::radio.enterTxMute();
 
     delayMs(20);
     toggleSpeaker(false);
 
     delayMs(5);
-    bk4819->turnsOffTones_TurnsOnRX();
+    Board::radio.turnsOffTones_TurnsOnRX();
     delayMs(5);
 
-    bk4819->writeRegister(BK4819_REG_71, ToneConfig);
+    Board::radio.writeRegister(BK4819_REG_71, ToneConfig);
     toggleSpeaker(isSpeakerWasOn);
   }
-
-private:
-  BK4819 *bk4819;
 };

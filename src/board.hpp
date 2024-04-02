@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../driver/adc.hpp"
-#include "../driver/backlight.hpp"
-#include "../driver/eeprom.hpp"
-#include "../driver/st7565.hpp"
-#include "../driver/system.hpp"
-#include "../svc/settings.hpp"
+#include "driver/adc.hpp"
+#include "driver/backlight.hpp"
 #include "driver/battery.hpp"
+#include "driver/eeprom.hpp"
+#include "driver/st7565.hpp"
+#include "driver/system.hpp"
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
+#include "lib/struct/settings.hpp"
 #include "radio.hpp"
 #include <stdint.h>
 #include <string.h>
@@ -19,16 +19,13 @@ class Board {
 
 public:
   static Battery battery;
-  static EEPROM eeprom;
+  static Settings settings;
   static Radio radio;
   static ST7565 display;
-  static SettingsService settings(&eeprom);
-
-  Board() { init(&settings); }
 
   void init() {
     SYSTICK_Init();
-    eeprom.init(settings.eepromType);
+    EEPROM::setType(settings.eepromType);
     initPortcon();
     initGpio();
     initAdc();

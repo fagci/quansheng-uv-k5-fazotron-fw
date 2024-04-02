@@ -17,10 +17,13 @@ public:
       1, 10, 100, 250, 500, 625, 833, 900, 1000, 1250, 2500, 10000,
   };
 
-  static bool inRange(uint32_t f, Range *r) { return r->contains(f); }
+  static bool inRange(uint32_t f, const Frequency::Range *r) {
+    return r->contains(f);
+  }
 };
 
 class Band {
+public:
   constexpr static Frequency::Range LPD = {43307500, 43477500};
   constexpr static Frequency::Range PMR = {44600625, 44609375};
   constexpr static Frequency::Range HAM2M = {14400000, 14799999};

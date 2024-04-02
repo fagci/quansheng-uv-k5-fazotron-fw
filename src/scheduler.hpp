@@ -19,8 +19,8 @@ public:
     bool active;
   } Task;
 
-  Task *taskAdd(const char *name, void (*handler)(), uint16_t interval,
-                bool continuous, uint8_t priority) {
+  static Task *taskAdd(const char *name, void (*handler)(), uint16_t interval,
+                       bool continuous, uint8_t priority) {
     UART_logf(3, "TaskAdd(%s)", name);
     if (tasksCount == TASKS_MAX) {
       return NULL;
@@ -45,7 +45,7 @@ public:
     return &tasks[insertI];
   }
 
-  void taskRemove(void (*handler)()) {
+  static void taskRemove(void (*handler)()) {
     uint8_t i;
     Task *t;
     for (i = 0; i < tasksCount; ++i) {
@@ -65,7 +65,7 @@ public:
     }
   }
 
-  bool taskExists(void (*handler)()) {
+  static bool taskExists(void (*handler)()) {
     uint8_t i;
     Task *t;
     for (i = 0; i < tasksCount; ++i) {
@@ -77,7 +77,7 @@ public:
     return false;
   }
 
-  void taskTouch(void (*handler)()) {
+  static void taskTouch(void (*handler)()) {
     Task *t;
     for (uint8_t i = 0; i < tasksCount; ++i) {
       t = &tasks[i];
@@ -89,7 +89,7 @@ public:
     }
   }
 
-  void tasksUpdate() {
+  static void tasksUpdate() {
     Task *task;
     if (Now() - lastUpdate == 0) {
       return;
@@ -119,11 +119,11 @@ public:
   }
 
 private:
-  uint32_t lastUpdate = 0;
-  uint8_t tasksCount = 0;
-  Task tasks[TASKS_MAX];
+  static uint32_t lastUpdate;
+  static uint8_t tasksCount;
+  static Task tasks[TASKS_MAX];
 
-  void handle(Task *task) {
+  static void handle(Task *task) {
     UART_logf(3, "%s::handle() start", task->name);
     task->handler();
     UART_logf(3, "%s::handle() end", task->name);

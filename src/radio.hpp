@@ -74,6 +74,7 @@ public:
   }
 
   void setF(uint32_t freq) { mainRadio->setF(freq); }
+  uint32_t getF() { mainRadio->getF(); }
   void rxEnable() { mainRadio->rxEnable(); }
   void idle() { mainRadio->idle(); }
   void resetRSSI() {

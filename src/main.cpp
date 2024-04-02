@@ -10,10 +10,9 @@
 } */
 
 extern "C" int Main(void) {
-  static Board board;
-  static ServiceManager serviceManager(&board);
+  static Svc serviceManager;
   while (true) {
-    serviceManager.update();
+    Scheduler::tasksUpdate();
   }
   return 0;
 }

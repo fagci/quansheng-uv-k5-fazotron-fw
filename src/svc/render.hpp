@@ -1,17 +1,14 @@
 #pragma once
 
 #include "../apps/apps.hpp"
-#include "../driver/st7565.hpp"
+#include "../board.hpp"
 #include "../driver/system.hpp"
-#include "../scheduler.hpp"
 #include "../ui/statusline.hpp"
 
 class RenderService {
   const uint32_t RENDER_TIME = 40;
 
 public:
-  RenderService(ST7565 *d) : display{d} {}
-
   void init() {}
 
   void update() {
@@ -19,7 +16,7 @@ public:
       APPS_render();
       STATUSLINE_render();
 
-      display->render();
+      Board::display.render();
       lastRender = elapsedMilliseconds;
       redrawScreen = false;
     }
@@ -27,8 +24,9 @@ public:
 
   void deinit() {}
 
+  void schedule() { redrawScreen = true; }
+
 protected:
-  ST7565 *display;
   bool redrawScreen;
   uint32_t lastRender = 0;
 };

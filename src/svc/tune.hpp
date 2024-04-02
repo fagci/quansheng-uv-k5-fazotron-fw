@@ -1,27 +1,24 @@
 #pragma once
 
-#include "../radio.hpp"
+#include "../board.hpp"
 #include "channel.hpp"
-#include "settings.hpp"
 
 class TuneService {
 public:
   constexpr static uint32_t upConverterValues[3] = {0, 5000000, 12500000};
 
-  TuneService(SettingsService *s, Radio *r) : settings(s), radio(r) {}
-
   void tuneTo(uint32_t f) {
-    radio->setF(f);
+    Board::radio.setF(f);
     Radio::Filter filterNeeded = filterByF(f);
-    radio->selectFilter(filterNeeded);
+    Board::radio.selectFilter(filterNeeded);
   }
 
   uint32_t GetScreenF(uint32_t f) {
-    return f - upConverterValues[settings->upconverter];
+    return f - upConverterValues[Board::settings.upconverter];
   }
 
   uint32_t GetTuneF(uint32_t f) {
-    return f + upConverterValues[settings->upconverter];
+    return f + upConverterValues[Board::settings.upconverter];
   }
 
   void vfoLoadCH(uint8_t i) {
@@ -33,8 +30,8 @@ public:
   void tuneTo(ChannelService::CH ch) {}
 
   void onVfoUpdate() {
-    TaskRemove(saveCurrentCH);
-    TaskAdd("CH save", saveCurrentCH, 2000, false, 0);
+    Scheduler::taskRemove(saveCurrentCH);
+    Scheduler::taskAdd("CH save", saveCurrentCH, 2000, false, 0);
   }
 
   void loadCurrentCH() {
@@ -169,9 +166,6 @@ public:
   }
 
 private:
-  SettingsService *settings;
-  Radio *radio;
-
   Radio::Filter filterByF(uint32_t f) {
     return f < settingsService.filterBound ? Radio::FILTER_VHF
                                            : Radio::FILTER_UHF;

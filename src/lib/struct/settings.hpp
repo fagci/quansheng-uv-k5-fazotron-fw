@@ -76,4 +76,6 @@ struct Settings {
   char nickName[10];
   PowerCalibration powCalib[12];
   AllowTX allowTX;
+
+  uint32_t getFilterBound() { return bound_240_280 ? 28000000 : 24000000; }
 };
