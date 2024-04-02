@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../lib/enum.hpp"
 #include <stdint.h>
 
 class AbstractRadio {
@@ -10,7 +11,7 @@ public:
     RADIO_SI4732,
   };
 
-  typedef enum {
+  typedef enum class IncDecEnum {
     MOD_FM,
     MOD_AM,
     MOD_USB,

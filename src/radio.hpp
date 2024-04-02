@@ -6,9 +6,9 @@
 #include "driver/bk4819.hpp"
 #include "driver/system.hpp"
 #include "globals.hpp"
+#include "lib/utils.hpp"
 #include "misc.hpp"
 #include <stdint.h>
-#include <string.h>
 
 typedef enum {
   SCAN_TO_0,
@@ -65,7 +65,6 @@ public:
     FILTER_UHF,
     FILTER_OFF,
   } Filter;
-  // getsize(SquelchSettings)
 
   void init() {
     bk4819.init();
@@ -131,7 +130,6 @@ public:
     if (gIsListening == on) {
       return;
     }
-    gRedrawScreen = true;
 
     gIsListening = on;
 
@@ -145,7 +143,7 @@ public:
   }
 
   void enableCxCSS() {
-    switch (vfo.codeTypeTX) {
+    switch (codeTypeTX) {
     /* case CODE_TYPE_DIGITAL:
     case CODE_TYPE_REVERSE_DIGITAL:
             bk4819.enableCDCSS();
@@ -192,7 +190,7 @@ public:
       bk4819.toggleGpioOut(BK4819_GPIO1_PIN29_PA_ENABLE, false);
       bk4819.toggleGpioOut(BK4819_GPIO0_PIN28_RX_ENABLE, true);
 
-      tuneToPure(vfo.f, true);
+      tuneToPure(f, true);
       bk4819.rxEnable();
     }
 
@@ -215,42 +213,43 @@ public:
   }
 
   void toggleModulation() {
-    vfo.modulation = IncDec<uint8_t, ModulationType>(
-        vfo.modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
-    if (vfo.modulation == MOD_WFM) {
-      if (isBK1080Range(vfo.f)) {
+    ++modulation;
+    modulation = IncDec<uint8_t, ModulationType>(
+        modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
+    if (modulation == MOD_WFM) {
+      if (bk1080.inRange(f)) {
         toggleBK1080(true);
         return;
       }
-      vfo.modulation = MOD_FM;
+      modulation = MOD_FM;
     }
     toggleBK1080(false);
-    bk4819.setModulation(vfo.modulation);
+    bk4819.setModulation(modulation);
   }
 
   void updateStep(bool inc) {
-    vfo.step = IncDec<uint8_t, Step>(
-        vfo.step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
+    step = IncDec<uint8_t, Step>(step, 0, ARRAY_SIZE(StepFrequencyTable),
+                                 inc ? 1 : -1);
   }
 
   void toggleListeningBW() {
-    if (vfo.bw == FILTER_BW_NARROWER) {
-      vfo.bw = FILTER_BW_WIDE;
+    if (bw == FILTER_BW_NARROWER) {
+      bw = FILTER_BW_WIDE;
     } else {
-      ++vfo.bw;
+      ++bw;
     }
 
-    bk4819.setFilterBandwidth(vfo.bw);
+    bk4819.setFilterBandwidth(bw);
   }
 
   void toggleTxPower() {
-    if (vfo.power == TX_POW_HIGH) {
-      vfo.power = TX_POW_LOW;
+    if (power == TX_POW_HIGH) {
+      power = TX_POW_LOW;
     } else {
-      ++vfo.power;
+      ++power;
     }
 
-    bk4819.setFilterBandwidth(vfo.bw); // TODO: ???
+    bk4819.setFilterBandwidth(bw); // TODO: ???
   }
 
   void tuneToPure(uint32_t f, bool precise) {
@@ -261,22 +260,19 @@ public:
     }
   }
 
-  void setSquelch(uint8_t sq) {
-    vfo.sq.level = sq;
-    bk4819.squelch(sq, vfo.f, vfo.sq.openTime, vfo.sq.closeTime);
-  }
+  void setSquelch(uint8_t sql) { bk4819.squelch(sq.level = sql, f); }
 
-  void setSquelchType(SquelchType t) { vfo.sq.type = t; }
+  void setSquelchType(SquelchType t) { sq.type = t; }
 
-  void setGain(uint8_t gainIndex) { bk4819.setGain(vfo.gainIndex = gainIndex); }
+  void setGain(uint8_t index) { bk4819.setGain(gainIndex = index); }
 
   void setupParams() {
-    tuneToPure(vfo.f, true);
-    bk4819.squelchType(vfo.sq.type);
-    bk4819.squelch(vfo.sq.level, vfo.f, vfo.sq.openTime, vfo.sq.closeTime);
-    bk4819.setFilterBandwidth(vfo.bw);
-    bk4819.setModulation(vfo.modulation);
-    bk4819.setGain(vfo.gainIndex);
+    tuneToPure(f, true);
+    bk4819.squelchType(sq.type);
+    bk4819.squelch(sq.level, f);
+    bk4819.setFilterBandwidth(bw);
+    bk4819.setModulation(modulation);
+    bk4819.setGain(gainIndex);
   }
 
   uint16_t getRSSI() { return gIsBK1080 ? 128 : bk4819.getRSSI(); }
@@ -303,14 +299,14 @@ public:
   }
 
   void updateSquelchLevel(bool next) {
-    uint8_t sq = vfo.sq.level;
-    if (!next && sq > 0) {
-      sq--;
+    uint8_t sql = sq.level;
+    if (!next && sql > 0) {
+      sql--;
     }
-    if (next && sq < 9) {
-      sq++;
+    if (next && sql < 9) {
+      sql++;
     }
-    setSquelch(sq);
+    setSquelch(sql);
   }
 
 private:

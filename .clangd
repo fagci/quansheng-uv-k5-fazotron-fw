@@ -8,6 +8,10 @@ CompileFlags:
         -Werror=strict-prototypes,
         -Wextra,
         -Wpedantic,
-        -mcpu=cortex-m0
+        -mcpu=cortex-m0,
+        "-I/usr/share/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/",
+        "-I/usr/share/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/",
+        "-I/usr/share/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/13.2.1/",
+        "-I/usr/share/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/13.2.1/arm-none-eabi/"
       ]
   Compiler: arm-none-eabi-g++
