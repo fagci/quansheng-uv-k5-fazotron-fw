@@ -1,10 +1,11 @@
-#ifndef SVC_APPS_H
-#define SVC_APPS_H
+#pragma once
 
-#include <stdint.h>
+#include "../apps/apps.hpp"
+#include "svc.hpp"
 
-void SVC_APPS_Init();
-void SVC_APPS_Update();
-void SVC_APPS_Deinit();
-
-#endif /* end of include guard: SVC_APPS_H */
+class AppsService : Svc {
+public:
+  void init() {}
+  void update() { APPS_update(); }
+  void deinit() {}
+};

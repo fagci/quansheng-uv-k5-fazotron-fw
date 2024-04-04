@@ -1,8 +1,10 @@
-#ifndef SVC_BAT_SAVE_H
-#define SVC_BAT_SAVE_H
+#pragma once
 
-void SVC_BAT_SAVE_Init();
-void SVC_BAT_SAVE_Update();
-void SVC_BAT_SAVE_Deinit();
+#include "svc.hpp"
 
-#endif /* end of include guard: SVC_BAT_SAVE_H */
+class BatSaveService : Svc {
+public:
+  void init() {}
+  void update() {}
+  void deinit() {}
+};

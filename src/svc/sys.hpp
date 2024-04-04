@@ -1,10 +1,14 @@
-#ifndef SVC_SYS_H
-#define SVC_SYS_H
+#pragma once
 
-#include <stdint.h>
+#include "svc.hpp"
+#include "ui/statusline.hpp"
 
-void SVC_SYS_Init();
-void SVC_SYS_Update();
-void SVC_SYS_Deinit();
-
-#endif /* end of include guard: SVC_SYS_H */
+class SystemService : Svc {
+public:
+  void init() {}
+  void update() {
+    STATUSLINE_update();
+    backlight.update();
+  }
+  void deinit() {}
+};
