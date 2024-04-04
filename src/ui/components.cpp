@@ -46,7 +46,7 @@ void UI_RSSIBar(uint16_t rssi, uint32_t f, uint8_t y) {
 
 void UI_FSmall(uint32_t f) {
   PrintSmallEx(LCD_WIDTH - 1, 15, POS_R, C_FILL,
-               modulationTypeOptions[radio->modulation]);
+               MOD_NAMES[radio->modulation]);
   PrintSmallEx(LCD_WIDTH - 1, 21, POS_R, C_FILL, BW_NAMES[radio->bw]);
 
   uint16_t step = StepFrequencyTable[radio->vfo.step];

@@ -9,7 +9,7 @@
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
 
 extern const uint16_t StepFrequencyTable[12];
-extern const char *modulationTypeOptions[6];
+extern const char *MOD_NAMES[6];
 extern const SquelchType sqTypeValues[4];
 
 typedef enum {
@@ -37,33 +37,6 @@ typedef enum {
   APP_TASKMAN,
   APP_MESSENGER,
 } AppType_t;
-
-typedef enum {
-  STEP_0_01kHz,
-  STEP_0_1kHz,
-  STEP_1_0kHz,
-  STEP_2_5kHz,
-  STEP_5_0kHz,
-  STEP_6_25kHz,
-  STEP_8_33kHz,
-  STEP_9kHz,
-  STEP_10_0kHz,
-  STEP_12_5kHz,
-  STEP_25_0kHz,
-  STEP_100_0kHz,
-} Step;
-
-typedef enum {
-  OFFSET_NONE,
-  OFFSET_PLUS,
-  OFFSET_MINUS,
-} OffsetDirection;
-
-typedef enum {
-  TX_POW_LOW,
-  TX_POW_MID,
-  TX_POW_HIGH,
-} TXOutputPower;
 
 typedef enum {
   TX_UNKNOWN,

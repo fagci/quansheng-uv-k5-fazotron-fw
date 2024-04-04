@@ -22,7 +22,7 @@ static MenuItem menu[] = {
     {"TX offset dir", M_TX_OFFSET_DIR, ARRAY_SIZE(TX_OFFSET_NAMES)},
     {"TX power", M_F_TXP, ARRAY_SIZE(TX_POWER_NAMES)},
     {"Step", M_STEP, ARRAY_SIZE(StepFrequencyTable)},
-    {"Modulation", M_MODULATION, ARRAY_SIZE(modulationTypeOptions)},
+    {"Modulation", M_MODULATION, ARRAY_SIZE(MOD_NAMES)},
     {"BW", M_BW, ARRAY_SIZE(BW_NAMES)},
     {"SQ type", M_SQ_TYPE, ARRAY_SIZE(SQ_TYPE_NAMES)},
     {"SQ level", M_SQ, 10},
@@ -68,7 +68,7 @@ static void getSubmenuItemText(uint16_t index, char *name) {
   const MenuItem *item = &menu[menuIndex];
   switch (item->type) {
   case M_MODULATION:
-    strncpy(name, modulationTypeOptions[index], 31);
+    strncpy(name, MOD_NAMES[index], 31);
     return;
   case M_BW:
     strncpy(name, BW_NAMES[index], 15);
@@ -109,8 +109,8 @@ void CHCFG_init() {
   for (uint8_t i = 0; i < MENU_SIZE; ++i) {
     if (menu[i].type == M_MODULATION) {
       menu[i].size = RADIO_IsBK1080Range(radio->f)
-                         ? ARRAY_SIZE(modulationTypeOptions)
-                         : ARRAY_SIZE(modulationTypeOptions) - 1;
+                         ? ARRAY_SIZE(MOD_NAMES)
+                         : ARRAY_SIZE(MOD_NAMES) - 1;
       break;
     }
   }

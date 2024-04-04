@@ -107,7 +107,7 @@ void GetMenuItemValue(BandCfgMenu type, char *Output) {
     sprintf(Output, "%ddB", gainTable[band.gainIndex].gainDb);
     break;
   case M_MODULATION:
-    strncpy(Output, modulationTypeOptions[band.modulation], 31);
+    strncpy(Output, MOD_NAMES[band.modulation], 31);
     break;
   case M_STEP:
     sprintf(Output, "%u.%02uKHz", StepFrequencyTable[band.step] / 100,

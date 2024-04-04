@@ -185,7 +185,7 @@ static void render2CHPart(uint8_t i) {
   const uint16_t fp1 = f / 100000;
   const uint16_t fp2 = f / 100 % 1000;
   const uint8_t fp3 = f % 100;
-  const char *mod = modulationTypeOptions[pmodulation];
+  const char *mod = MOD_NAMES[pmodulation];
 
   if (isActive && gTxState <= TX_ON) {
     FillRect(0, bl - 14, 28, 7, C_FILL);
@@ -254,7 +254,7 @@ void CH1_render() {
   uint16_t fp1 = f / 100000;
   uint16_t fp2 = f / 100 % 1000;
   uint8_t fp3 = f % 100;
-  const char *mod = modulationTypeOptions[vfo->modulation];
+  const char *mod = MOD_NAMES[vfo->modulation];
   if (gIsListening) {
     if (!gIsBK1080) {
       UI_RSSIBar(gLoot[gSettings.activeCH].rssi, vfo->f, BASE + 2);

@@ -18,7 +18,7 @@ static MenuItem menu[] = {
     {"End freq", M_END},
     {"Name", M_NAME},
     {"Step", M_STEP, ARRAY_SIZE(StepFrequencyTable)},
-    {"Modulation", M_MODULATION, ARRAY_SIZE(modulationTypeOptions)},
+    {"Modulation", M_MODULATION, ARRAY_SIZE(MOD_NAMES)},
     {"BW", M_BW, ARRAY_SIZE(BW_NAMES)},
     {"SQ level", M_SQ, 10},
     {"SQ type", M_SQ_TYPE, ARRAY_SIZE(SQ_TYPE_NAMES)},
@@ -64,7 +64,7 @@ static void getSubmenuItemText(uint16_t index, char *name) {
   const MenuItem *item = &menu[menuIndex];
   switch (item->type) {
   case M_MODULATION:
-    strncpy(name, modulationTypeOptions[index], 31);
+    strncpy(name, MOD_NAMES[index], 31);
     return;
   case M_BW:
     strncpy(name, BW_NAMES[index], 31);

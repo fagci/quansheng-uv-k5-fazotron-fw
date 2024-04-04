@@ -10,59 +10,6 @@
 #include "misc.hpp"
 #include <stdint.h>
 
-enum ScanTimeout {
-  SCAN_TO_0,
-  SCAN_TO_500ms,
-  SCAN_TO_1s,
-  SCAN_TO_2s,
-  SCAN_TO_5s,
-  SCAN_TO_10s,
-  SCAN_TO_30s,
-  SCAN_TO_1min,
-  SCAN_TO_2min,
-  SCAN_TO_5min,
-  SCAN_TO_NONE,
-};
-
-enum Chip {
-  RADIO_BK4819,
-  RADIO_BK1080,
-  RADIO_SI4732,
-};
-
-typedef struct {
-  uint8_t timeout : 8;
-  ScanTimeout openedTimeout : 4;
-  ScanTimeout closedTimeout : 4;
-} __attribute__((packed)) ScanSettings;
-
-typedef struct {
-  uint8_t level : 6;
-  uint8_t openTime : 2;
-  SquelchType type;
-  uint8_t closeTime : 3;
-} __attribute__((packed)) SquelchSettings;
-
-struct VFO {
-  int16_t channel;
-  ScanSettings scan;
-  Step step : 4;
-  uint32_t f : 27;
-  uint32_t offset : 27;
-  OffsetDirection offsetDir;
-  ModulationType modulation : 4;
-  FilterBandwidth bw : 2;
-  TXOutputPower power : 2;
-  uint8_t codeRX;
-  uint8_t codeTX;
-  uint8_t codeTypeRX : 4;
-  uint8_t codeTypeTX : 4;
-  SquelchSettings sq;
-  uint8_t gainIndex : 5;
-  Chip chip : 2;
-
-  VFO *getVfo() { return this; }
-} __attribute__((packed));
 
 class Radio : AbstractRadio, VFO {
 public:

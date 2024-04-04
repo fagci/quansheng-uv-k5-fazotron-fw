@@ -17,18 +17,6 @@ enum FreqScanTime {
   F_SC_T_1_6s,
 };
 
-enum SquelchType {
-  SQUELCH_RSSI_NOISE_GLITCH,
-  SQUELCH_RSSI_GLITCH,
-  SQUELCH_RSSI_NOISE,
-  SQUELCH_RSSI,
-};
-
-enum FilterBandwidth {
-  FILTER_BW_WIDE,
-  FILTER_BW_NARROW,
-  FILTER_BW_NARROWER,
-};
 
 struct Gain {
   uint16_t regValue;
@@ -89,7 +77,7 @@ class BK4819 : public AbstractRadio {
 
 public:
   static constexpr ModulationType MOD_TYPES[] = {
-      MOD_WFM, MOD_FM, MOD_AM, MOD_DSB, MOD_BYP, MOD_RAW,
+      MOD_WFM, MOD_NFM, MOD_AM, MOD_DSB, MOD_BYP, MOD_RAW,
   };
 
   static constexpr Frequency::Range BOUNDS = {1600000, 134000000};

@@ -11,36 +11,39 @@ class EEPROM {
 
 public:
   typedef enum {
-    EEPROM_A,         // 000
-    EEPROM_B,         // 001
-    EEPROM_BL24C64,   // 010 checkbyte default
-    EEPROM_BL24C128,  // 011
-    EEPROM_BL24C256,  // 100
-    EEPROM_BL24C512,  // 101
-    EEPROM_BL24C1024, // 110
-    EEPROM_M24M02,    // 111
+    EEPROM_BL24C64,   //
+    EEPROM_BL24C128,  //
+    EEPROM_BL24C256,  //
+    EEPROM_BL24C512,  //
+    EEPROM_BL24C1024, //
+    EEPROM_M24M02,    //
   } Type;
 
+  constexpr static const char *EEPROM_TYPE_NAMES[8] = {
+      "BL24C64 (default)", //
+      "BL24C128",          //
+      "BL24C256",          //
+      "BL24C512",          //
+      "BL24C1024",         //
+      "M24M02 (x1)",       //
+  };
+
   constexpr static uint32_t SIZES[8] = {
-      8192,   // 000
-      8192,   // 001
-      8192,   // 010
-      16384,  // 011
-      32768,  // 100
-      65536,  // 101
-      131072, // 110
-      262144, // 111
+      8192,   //
+      16384,  //
+      32768,  //
+      65536,  //
+      131072, //
+      262144, //
   };
 
   constexpr static uint8_t PAGE_SIZES[8] = {
-      32,  // 000
-      32,  // 001
-      32,  // 010
-      32,  // 011
-      32,  // 100
-      32,  // 101
-      32,  // 110
-      128, // 111
+      32,  //
+      32,  //
+      32,  //
+      32,  //
+      32,  //
+      128, //
   };
 
   static void setType(Type t) { eepromType = t; }
