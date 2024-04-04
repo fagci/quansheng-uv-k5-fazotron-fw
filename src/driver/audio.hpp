@@ -2,6 +2,7 @@
 
 #include "../board.hpp"
 #include "../inc/dp32g030/gpio.h"
+#include "bk4819.hpp"
 #include "gpio.hpp"
 #include <stdint.h>
 
@@ -21,30 +22,31 @@ public:
 
   void playTone(uint32_t frequency, uint16_t duration) {
     bool isSpeakerWasOn = isSpeakerOn();
-    uint16_t ToneConfig = Board::radio.readRegister(BK4819_REG_71);
+    BK4819 *bk4819 = &Board::radio.bk4819;
+    uint16_t ToneConfig = bk4819->readRegister(BK4819_REG_71);
 
     toggleSpeaker(false);
     // BK4819_RX_TurnOn();
 
     delayMs(20);
-    Board::radio.playTone(frequency, true);
+    bk4819->playTone(frequency, true);
     delayMs(2);
 
     toggleSpeaker(true);
     delayMs(60);
 
-    Board::radio.exitTxMute();
+    bk4819->exitTxMute();
     delayMs(duration);
-    Board::radio.enterTxMute();
+    bk4819->enterTxMute();
 
     delayMs(20);
     toggleSpeaker(false);
 
     delayMs(5);
-    Board::radio.turnsOffTones_TurnsOnRX();
+    bk4819->turnsOffTones_TurnsOnRX();
     delayMs(5);
 
-    Board::radio.writeRegister(BK4819_REG_71, ToneConfig);
+    bk4819->writeRegister(BK4819_REG_71, ToneConfig);
     toggleSpeaker(isSpeakerWasOn);
   }
 };

@@ -10,7 +10,7 @@
 #include "misc.hpp"
 #include <stdint.h>
 
-typedef enum {
+enum ScanTimeout {
   SCAN_TO_0,
   SCAN_TO_500ms,
   SCAN_TO_1s,
@@ -22,7 +22,13 @@ typedef enum {
   SCAN_TO_2min,
   SCAN_TO_5min,
   SCAN_TO_NONE,
-} ScanTimeout;
+};
+
+enum Chip {
+  RADIO_BK4819,
+  RADIO_BK1080,
+  RADIO_SI4732,
+};
 
 typedef struct {
   uint8_t timeout : 8;
@@ -33,7 +39,7 @@ typedef struct {
 typedef struct {
   uint8_t level : 6;
   uint8_t openTime : 2;
-  AbstractRadio::SquelchType type;
+  SquelchType type;
   uint8_t closeTime : 3;
 } __attribute__((packed)) SquelchSettings;
 
@@ -44,8 +50,8 @@ struct VFO {
   uint32_t f : 27;
   uint32_t offset : 27;
   OffsetDirection offsetDir;
-  AbstractRadio::ModulationType modulation : 4;
-  AbstractRadio::FilterBandwidth bw : 2;
+  ModulationType modulation : 4;
+  FilterBandwidth bw : 2;
   TXOutputPower power : 2;
   uint8_t codeRX;
   uint8_t codeTX;
@@ -53,10 +59,16 @@ struct VFO {
   uint8_t codeTypeTX : 4;
   SquelchSettings sq;
   uint8_t gainIndex : 5;
+  Chip chip : 2;
+
+  VFO *getVfo() { return this; }
 } __attribute__((packed));
 
 class Radio : AbstractRadio, VFO {
 public:
+  static BK4819 bk4819;
+  static BK1080 bk1080;
+
   constexpr static uint32_t VHF_UHF_BOUND1 = 24000000;
   constexpr static uint32_t VHF_UHF_BOUND2 = 28000000;
 
@@ -223,9 +235,7 @@ public:
   }
 
   void toggleModulation() {
-    ++modulation;
-    modulation = IncDec<uint8_t, ModulationType>(
-        modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
+    modulation = IncDec(modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
     if (modulation == MOD_WFM) {
       if (bk1080.inRange(f)) {
         toggleBK1080(true);
@@ -238,35 +248,25 @@ public:
   }
 
   void updateStep(bool inc) {
-    step = IncDec<uint8_t, Step>(step, 0, ARRAY_SIZE(StepFrequencyTable),
-                                 inc ? 1 : -1);
+    step = IncDec(step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
   }
 
   void toggleListeningBW() {
-    if (bw == FILTER_BW_NARROWER) {
-      bw = FILTER_BW_WIDE;
-    } else {
-      ++bw;
-    }
+    bw = IncDec(bw, FILTER_BW_WIDE, FILTER_BW_NARROWER, 1);
 
     bk4819.setFilterBandwidth(bw);
   }
 
-  void toggleTxPower() {
-    if (power == TX_POW_HIGH) {
-      power = TX_POW_LOW;
-    } else {
-      ++power;
-    }
-
-    bk4819.setFilterBandwidth(bw); // TODO: ???
-  }
+  void toggleTxPower() { power = IncDec(power, TX_POW_LOW, TX_POW_HIGH, 1); }
 
   void tuneToPure(uint32_t f, bool precise) {
-    if (gIsBK1080) {
-      bk1080.setF(f);
-    } else {
+    switch (chip) {
+    case RADIO_BK4819:
       bk4819.tuneTo(f, precise);
+      break;
+    default:
+      mainRadio->setF(f);
+      break;
     }
   }
 
@@ -285,8 +285,6 @@ public:
     bk4819.setGain(gainIndex);
   }
 
-  uint16_t getRSSI() { return gIsBK1080 ? 128 : bk4819.getRSSI(); }
-
   void handleInterrupts(void *handler(uint16_t intBits)) {
     while (bk4819.readRegister(BK4819_REG_0C) & 1u) {
       bk4819.writeRegister(BK4819_REG_02, 0);
@@ -296,10 +294,12 @@ public:
   }
 
   bool isSqOpen(bool manual) {
-    return gIsBK1080 ? true
-                     : (manual ? bk4819.isSquelchOpen()
-                               : isSqOpenSimple(
-                                     msm->rssi)); // FIXME: actual RSSI problem
+    switch (chip) {
+    case RADIO_BK4819:
+      return (manual ? bk4819.isSquelchOpen() : isSqOpenSimple(msm->rssi));
+    default:
+      return true;
+    }
   }
 
   void enableToneDetection() {
@@ -320,14 +320,9 @@ public:
   }
 
 private:
-  BK4819 bk4819;
-  BK1080 bk1080;
-
   AbstractRadio *mainRadio;
 
   bool gIsListening = false;
-
-  bool gIsBK1080 = false;
 
   TXState gTxState = TX_UNKNOWN;
   Filter selectedFilter = FILTER_OFF;

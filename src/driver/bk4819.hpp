@@ -10,17 +10,39 @@
 #include "system.hpp"
 #include <stdint.h>
 
-typedef enum {
+enum FreqScanTime {
   F_SC_T_0_2s,
   F_SC_T_0_4s,
   F_SC_T_0_8s,
   F_SC_T_1_6s,
-} FreqScanTime;
+};
 
-typedef struct {
+enum ModulationType {
+  MOD_FM,
+  MOD_AM,
+  MOD_USB,
+  MOD_BYP,
+  MOD_RAW,
+  MOD_WFM,
+};
+
+enum SquelchType {
+  SQUELCH_RSSI_NOISE_GLITCH,
+  SQUELCH_RSSI_GLITCH,
+  SQUELCH_RSSI_NOISE,
+  SQUELCH_RSSI,
+};
+
+enum FilterBandwidth {
+  FILTER_BW_WIDE,
+  FILTER_BW_NARROW,
+  FILTER_BW_NARROWER,
+};
+
+struct Gain {
   uint16_t regValue;
   int8_t gainDb;
-} Gain;
+};
 
 static const uint16_t FSK_RogerTable[7] = {
     0xF1A2, 0x7446, 0x61A4, 0x6544, 0x4E8A, 0xE044, 0xEA84,

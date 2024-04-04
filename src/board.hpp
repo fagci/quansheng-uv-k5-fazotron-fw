@@ -2,7 +2,6 @@
 
 #include "driver/adc.hpp"
 #include "driver/audio.hpp"
-#include "driver/backlight.hpp"
 #include "driver/battery.hpp"
 #include "driver/eeprom.hpp"
 #include "driver/st7565.hpp"

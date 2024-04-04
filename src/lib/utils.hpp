@@ -1,7 +1,9 @@
 #pragma once
+#include <stdint.h>
 
-template <class T, class R> constexpr R IncDec(R val, T min, T max, T inc) {
-  T mma = max - min + 1;
-  T vmi = (val - min) + inc;
-  return (R)(((vmi % mma) + mma) % mma + min);
+template <class R>
+constexpr R IncDec(R val, int64_t min, int64_t max, int64_t inc) {
+  auto mma = max - min + 1;
+  auto vmi = (static_cast<int64_t>(val) - min) + inc;
+  return static_cast<R>(((vmi % mma) + mma) % mma + min);
 }
