@@ -9,7 +9,6 @@
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
 
 extern const uint16_t StepFrequencyTable[12];
-extern const char *MOD_NAMES[6];
 extern const SquelchType sqTypeValues[4];
 
 typedef enum {

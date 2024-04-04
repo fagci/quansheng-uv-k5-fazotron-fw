@@ -31,11 +31,11 @@ typedef enum {
   TX_ALLOW_ALL,
 } AllowTX;
 
-typedef struct {
+struct PowerCalibration {
   uint8_t s : 8;
   uint8_t m : 8;
   uint8_t e : 8;
-} __attribute__((packed)) PowerCalibration;
+} __attribute__((packed));
 
 struct Settings {
   EEPROM::Type eepromType : 3;
