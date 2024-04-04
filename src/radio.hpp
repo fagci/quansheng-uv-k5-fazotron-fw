@@ -88,7 +88,7 @@ public:
   void setF(uint32_t freq) { mainRadio->setF(freq); }
   uint32_t getF() { mainRadio->getF(); }
   void rxEnable() { mainRadio->rxEnable(); }
-  void idle() { mainRadio->idle(); }
+  void idle(bool on) { mainRadio->idle(on); }
   void resetRSSI() {
     if (mainRadio == &bk4819) {
       bk4819.resetRSSI();
@@ -110,7 +110,17 @@ public:
   virtual uint8_t getGlitch() { return mainRadio->getGlitch(); }
   virtual uint8_t getSNR() { return mainRadio->getSNR(); }
 
-  virtual void mute(bool m) { mainRadio->mute(m); }
+  void mute(bool on) {
+    if (on) {
+      mainRadio->mute(false);
+      delayMs(10);
+      Audio::toggleSpeaker(true);
+    } else {
+      Audio::toggleSpeaker(false);
+      delayMs(10);
+      mainRadio->mute(true);
+    }
+  }
 
   void selectFilter(Filter filterNeeded) {
     if (selectedFilter == filterNeeded) {
@@ -124,43 +134,11 @@ public:
                          filterNeeded == FILTER_UHF);
   }
 
-  void toggleBK4819(bool on) {
-    if (on) {
-      bk4819.mute(false);
-      delayMs(10);
-      Audio::toggleSpeaker(true);
-    } else {
-      Audio::toggleSpeaker(false);
-      delayMs(10);
-      bk4819.mute(true);
-    }
-  }
-
-  void toggleBK1080(bool on) {
-    if (on) {
-      bk1080.mute(false);
-      delayMs(10);
-      Audio::toggleSpeaker(true);
-    } else {
-      Audio::toggleSpeaker(false);
-      delayMs(10);
-      bk1080.mute(true);
-    }
-  }
-
   void toggleRX(bool on) {
-    if (gIsListening == on) {
-      return;
-    }
-
-    gIsListening = on;
-
-    bk4819.toggleGpioOut(BK4819_GPIO0_PIN28_GREEN, on);
-
-    if (gIsBK1080) {
-      toggleBK1080(on);
-    } else {
-      toggleBK4819(on);
+    if (gIsListening != on) {
+      gIsListening = on;
+      bk4819.toggleGpioOut(BK4819_GPIO0_PIN28_GREEN, on);
+      mute(!on);
     }
   }
 
@@ -188,6 +166,9 @@ public:
   }
 
   void toggleTX(bool on, uint32_t txF, uint8_t power) {
+    if (chip != RADIO_BK4819) {
+      return;
+    }
     if (on) {
       toggleRX(false);
 
@@ -219,33 +200,7 @@ public:
     bk4819.toggleGpioOut(BK4819_GPIO5_PIN1_RED, on);
   }
 
-  void toggleBK1080(bool on) {
-    if (on == gIsBK1080) {
-      return;
-    }
-    gIsBK1080 = on;
-
-    if (gIsBK1080) {
-      toggleBK4819(false);
-      bk4819.idle();
-    } else {
-      toggleBK1080(false);
-      bk4819.rxEnable();
-    }
-  }
-
-  void toggleModulation() {
-    modulation = IncDec(modulation, 0, ARRAY_SIZE(modulationTypeOptions), 1);
-    if (modulation == MOD_WFM) {
-      if (bk1080.inRange(f)) {
-        toggleBK1080(true);
-        return;
-      }
-      modulation = MOD_FM;
-    }
-    toggleBK1080(false);
-    bk4819.setModulation(modulation);
-  }
+  void toggleModulation() { mainRadio->toggleModulation(); }
 
   void updateStep(bool inc) {
     step = IncDec(step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);
@@ -290,15 +245,6 @@ public:
       bk4819.writeRegister(BK4819_REG_02, 0);
 
       handler(bk4819.readRegister(BK4819_REG_02));
-    }
-  }
-
-  bool isSqOpen(bool manual) {
-    switch (chip) {
-    case RADIO_BK4819:
-      return (manual ? bk4819.isSquelchOpen() : isSqOpenSimple(msm->rssi));
-    default:
-      return true;
     }
   }
 

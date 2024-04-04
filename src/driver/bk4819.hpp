@@ -17,15 +17,6 @@ enum FreqScanTime {
   F_SC_T_1_6s,
 };
 
-enum ModulationType {
-  MOD_FM,
-  MOD_AM,
-  MOD_USB,
-  MOD_BYP,
-  MOD_RAW,
-  MOD_WFM,
-};
-
 enum SquelchType {
   SQUELCH_RSSI_NOISE_GLITCH,
   SQUELCH_RSSI_GLITCH,
@@ -97,6 +88,10 @@ const Gain gainTable[19] = {
 class BK4819 : public AbstractRadio {
 
 public:
+  static constexpr ModulationType MOD_TYPES[] = {
+      MOD_WFM, MOD_FM, MOD_AM, MOD_DSB, MOD_BYP, MOD_RAW,
+  };
+
   static constexpr Frequency::Range BOUNDS = {1600000, 134000000};
 
   typedef enum AF_Type_t {
@@ -371,9 +366,21 @@ public:
 
   void exitTxMute() { writeRegister(BK4819_REG_50, 0x3B20); }
 
-  void sleep() {
-    writeRegister(BK4819_REG_30, 0);
-    writeRegister(BK4819_REG_37, 0x1D00);
+  void sleep(bool on) {
+    if (on) {
+      writeRegister(BK4819_REG_30, 0);
+      writeRegister(BK4819_REG_37, 0x1D00);
+    } else {
+      writeRegister(BK4819_REG_37, 0x1D0F);
+    }
+  }
+
+  void idle(bool on) {
+    if (on) {
+      writeRegister(BK4819_REG_30, 0x0000);
+    } else {
+      rxEnable();
+    }
   }
 
   void turnsOffTones_TurnsOnRX() {
@@ -387,8 +394,6 @@ public:
             BK4819_REG_30_ENABLE_AF_DAC | BK4819_REG_30_ENABLE_DISC_MODE |
             BK4819_REG_30_ENABLE_PLL_VCO | BK4819_REG_30_ENABLE_RX_DSP);
   }
-
-  void idle() { writeRegister(BK4819_REG_30, 0x0000); }
 
   void exitBypass() {
     setAF(AF_MUTE);
