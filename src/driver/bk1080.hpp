@@ -45,10 +45,7 @@ public:
 
   bool inRange(uint32_t f) { return f >= 6400000 && f <= 10800000; }
 
-  void rxEnable() {
-    mute(false);
-    GPIO_SetBit(&GPIOB->DATA, GPIOB_PIN_BK1080);
-  }
+  void rxEnable() { sleep(false); }
 
   void setF(uint32_t f) {
     if (f == currentF) {
@@ -76,7 +73,18 @@ public:
 
   uint16_t getRSSI() { return (readRegister(BK1080_REG_10) & 0xFF) << 1; }
 
-  void idle() { GPIO_ClearBit(&GPIOB->DATA, GPIOB_PIN_BK1080); }
+  void idle(bool on) {
+    if (on) {
+      GPIO_ClearBit(&GPIOB->DATA, GPIOB_PIN_BK1080);
+    } else {
+      GPIO_SetBit(&GPIOB->DATA, GPIOB_PIN_BK1080);
+    }
+  }
+
+  void sleep(bool on) {
+    mute(on);
+    idle(on);
+  }
 
   uint16_t readRegister(BK1080_Register_t Register) {
     uint8_t Value[2];

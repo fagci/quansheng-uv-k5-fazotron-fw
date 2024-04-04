@@ -10,8 +10,7 @@
 #include "misc.hpp"
 #include <stdint.h>
 
-
-class Radio : AbstractRadio, VFO {
+class Radio : AbstractRadio {
 public:
   static BK4819 bk4819;
   static BK1080 bk1080;

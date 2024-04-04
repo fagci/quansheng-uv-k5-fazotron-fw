@@ -1,7 +1,7 @@
 #pragma once
 
+#include "lib/struct/settings.hpp"
 #include "misc.hpp"
-#include "svc/settings.hpp"
 #include <stdint.h>
 
 class Frequency {
@@ -47,12 +47,11 @@ public:
     return 6;
   }
 
-  static uint8_t
-  calculateOutputPower(uint32_t f,
-                       SettingsService::PowerCalibration *powerCalibration) {
+  static uint8_t calculateOutputPower(uint32_t f,
+                                      PowerCalibration *powerCalibration) {
     const uint8_t bi = getIndex(f);
     const Frequency::Range *range = &STOCK_BANDS[bi];
-    const SettingsService::PowerCalibration *pCal = &powerCalibration[bi];
+    const PowerCalibration *pCal = &powerCalibration[bi];
     const uint32_t Middle = range->start + (range->end - range->start) / 2;
 
     if (f <= range->start) {
