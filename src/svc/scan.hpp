@@ -18,10 +18,10 @@ public:
   void next() {
     lastListenState = false;
     gScanFn(gScanForward);
-    lastSettedF = ServiceManager::board.radio->getF();
-    SetTimeout(&timeout, radio->vfo.scan.timeout);
+    lastSettedF = Board::radio->getF();
+    SetTimeout(&timeout, Board::radio.vfo.scan.timeout);
     if (gScanRedraw) {
-      gRedrawScreen = true;
+      S::render.schedule();
     }
   }
 
@@ -32,18 +32,19 @@ public:
       if (Board::radio.channel >= 0) {
         gScanFn = S::tune.nextCH;
       } else {
-        gScanFn = tuneService->nextBandFreq;
+        gScanFn = S::tune.nextBandFreq;
       }
     }
     next();
   }
 
   void update() {
-    if (lastListenState != listenService->isListening()) {
-      lastListenState = listenService->isListening();
-      SetTimeout(&timeout, lastListenState
-                               ? SCAN_TIMEOUTS[radio->vfo.scan.openedTimeout]
-                               : SCAN_TIMEOUTS[radio->vfo.scan.closedTimeout]);
+    if (lastListenState != S::listen.isListening()) {
+      lastListenState = S::listen.isListening();
+      SetTimeout(&timeout,
+                 lastListenState
+                     ? SCAN_TIMEOUTS[Board::radio.scan.openedTimeout]
+                     : SCAN_TIMEOUTS[Board::radio.scan.closedTimeout]);
     }
 
     if (CheckTimeout(&timeout)) {
@@ -51,7 +52,7 @@ public:
       return;
     }
 
-    if (lastSettedF != radio->getF()) {
+    if (lastSettedF != Board::radio.getF()) {
       SetTimeout(&timeout, 0);
     }
   }
