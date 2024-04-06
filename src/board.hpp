@@ -6,10 +6,12 @@
 #include "driver/eeprom.hpp"
 #include "driver/st7565.hpp"
 #include "driver/system.hpp"
+extern "C" {
 #include "inc/dp32g030/gpio.h"
 #include "inc/dp32g030/portcon.h"
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
+}
 #include "lib/struct/settings.hpp"
 #include "radio.hpp"
 

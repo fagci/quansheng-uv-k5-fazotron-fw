@@ -5,6 +5,8 @@ BIN_DIR := bin
 TARGET = $(BIN_DIR)/firmware
 CPU = -mcpu=cortex-m0
 
+SRC += $(wildcard $(SRC_DIR)/lib/struct/*.cpp)
+SRC += $(wildcard $(SRC_DIR)/lib/*.cpp)
 SRC += $(wildcard $(SRC_DIR)/driver/*.cpp)
 SRC += $(wildcard $(SRC_DIR)/helpers/*.cpp)
 SRC += $(wildcard $(SRC_DIR)/svc/*.cpp)
