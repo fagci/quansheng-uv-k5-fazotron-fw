@@ -2,11 +2,13 @@
 
 #include "../driver/uart.hpp"
 #include "../radio.hpp"
+#include "board.hpp"
 #include "listening.hpp"
 #include "svc.hpp"
+#include "svc/manager.hpp"
 #include "tune.hpp"
 
-class ScanService {
+class ScanService : public Svc {
   class CallbackFunctor {
   public:
     void operator()(bool v) {}
@@ -27,8 +29,8 @@ public:
     gScanForward = true;
     Log("SCAN init, SF:%u", !!gScanFn);
     if (!gScanFn) {
-      if (radio->vfo.channel >= 0) {
-        gScanFn = ServiceManager::tuneService.nextCH;
+      if (Board::radio.channel >= 0) {
+        gScanFn = S::tune.nextCH;
       } else {
         gScanFn = tuneService->nextBandFreq;
       }
@@ -78,7 +80,7 @@ private:
       ((uint32_t)0) - 1,
   };
 
-  static constexpr char *SCAN_TIMEOUT_NAMES[11] = {
+  static constexpr const char *SCAN_TIMEOUT_NAMES[11] = {
       "0",   "500ms", "1s",   "2s",   "5s",   "10s",
       "30s", "1min",  "2min", "5min", "None",
   };

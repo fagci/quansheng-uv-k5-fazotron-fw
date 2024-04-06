@@ -2,6 +2,7 @@
 
 #include "../board.hpp"
 #include "../frequency.hpp"
+#include "manager.hpp"
 #include "svc.hpp"
 
 class ListenService : public Svc {
@@ -94,7 +95,7 @@ public:
   }
 
   void toggleRX(bool on) {
-    Svc::backlight.toggleSquelch(on);
+    S::backlight.toggleSquelch(on);
     Board::radio.toggleRX(on);
   }
 

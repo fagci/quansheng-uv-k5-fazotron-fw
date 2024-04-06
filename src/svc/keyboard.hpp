@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../apps/apps.hpp"
-#include "../driver/backlight.hpp"
 #include "../driver/gpio.hpp"
 #include "../driver/keyboard.hpp"
 #include "../inc/dp32g030/gpio.h"

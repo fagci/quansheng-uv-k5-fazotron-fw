@@ -1,14 +1,15 @@
 #pragma once
 
 #include "svc.hpp"
+#include "svc/manager.hpp"
 #include "ui/statusline.hpp"
 
-class SystemService : Svc {
+class SystemService : public Svc {
 public:
   void init() {}
   void update() {
     STATUSLINE_update();
-    backlight.update();
+    S::backlight.update();
   }
   void deinit() {}
 };

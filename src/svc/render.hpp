@@ -4,8 +4,9 @@
 #include "../board.hpp"
 #include "../driver/system.hpp"
 #include "../ui/statusline.hpp"
+#include "svc/svc.hpp"
 
-class RenderService {
+class RenderService : public Svc {
   const uint32_t RENDER_TIME = 40;
 
 public:

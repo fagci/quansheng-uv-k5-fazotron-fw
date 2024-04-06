@@ -2,7 +2,7 @@
 
 #include "svc.hpp"
 
-class BatSaveService : Svc {
+class BatSaveService : public Svc {
 public:
   void init() {}
   void update() {}

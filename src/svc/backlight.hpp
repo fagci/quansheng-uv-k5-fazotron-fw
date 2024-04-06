@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../board.hpp"
 #include "../driver/st7565.hpp"
 #include "svc.hpp"
 #include <stdint.h>
