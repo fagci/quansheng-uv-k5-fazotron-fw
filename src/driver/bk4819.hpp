@@ -17,7 +17,6 @@ enum FreqScanTime {
   F_SC_T_1_6s,
 };
 
-
 struct Gain {
   uint16_t regValue;
   int8_t gainDb;
@@ -854,7 +853,7 @@ public:
 
   void stopScan() {
     disableFrequencyScan();
-    idle();
+    idle(true);
   }
 
   /// FSK FUNCTIONS
@@ -864,7 +863,7 @@ public:
     writeRegister(BK4819_REG_59,
                   0x0068); // Sync length 4 bytes, 7 byte preamble
     delayMs(30);
-    idle();
+    idle(true);
   }
 
   void fskClearFifo() {

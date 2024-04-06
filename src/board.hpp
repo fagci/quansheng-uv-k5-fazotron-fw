@@ -12,7 +12,7 @@ extern "C" {
 #include "inc/dp32g030/saradc.h"
 #include "inc/dp32g030/syscon.h"
 }
-#include "lib/struct/settings.hpp"
+#include "settings.hpp"
 #include "radio.hpp"
 
 class Board {

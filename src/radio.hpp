@@ -6,7 +6,7 @@
 #include "driver/bk4819.hpp"
 #include "driver/system.hpp"
 #include "globals.hpp"
-#include "lib/utils.hpp"
+#include "utils.hpp"
 #include "misc.hpp"
 #include <stdint.h>
 
@@ -32,7 +32,7 @@ public:
   }
 
   void setF(uint32_t freq) { mainRadio->setF(freq); }
-  uint32_t getF() { mainRadio->getF(); }
+  uint32_t getF() { return mainRadio->getF(); }
   void rxEnable() { mainRadio->rxEnable(); }
   void idle(bool on) { mainRadio->idle(on); }
   void resetRSSI() {

@@ -1,8 +1,13 @@
 #pragma once
 
-#include "lib/struct/settings.hpp"
 #include "misc.hpp"
 #include <stdint.h>
+
+struct PowerCalibration {
+  uint8_t s : 8;
+  uint8_t m : 8;
+  uint8_t e : 8;
+} __attribute__((packed));
 
 class Frequency {
 public:

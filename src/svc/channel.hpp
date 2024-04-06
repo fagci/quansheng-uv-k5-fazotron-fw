@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../radio.hpp"
+#include "driver/abstractradio.hpp"
 
 class ChannelService {
 public:
-  typedef struct CH : Radio::VFO {
+  typedef struct CH : VFO {
     char *name[10];
   } __attribute__((packed)) VFO;
 

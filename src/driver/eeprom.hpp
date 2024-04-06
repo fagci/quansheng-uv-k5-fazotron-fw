@@ -5,7 +5,6 @@
 #include "system.hpp"
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 class EEPROM {
 
