@@ -6,8 +6,8 @@
 #include "driver/bk4819.hpp"
 #include "driver/system.hpp"
 #include "globals.hpp"
-#include "utils.hpp"
 #include "misc.hpp"
+#include "utils.hpp"
 #include <stdint.h>
 
 class Radio : AbstractRadio {
@@ -146,7 +146,18 @@ public:
     bk4819.toggleGpioOut(BK4819_GPIO5_PIN1_RED, on);
   }
 
-  void toggleModulation() { mainRadio->toggleModulation(); }
+  void toggleModulation() {
+    switch (chip) {
+    case RADIO_BK4819:
+      modulation = IncDec(modulation, 0, ARRAY_SIZE(BK4819::MOD_TYPES), 1);
+      break;
+    case RADIO_BK1080:
+      modulation = IncDec(modulation, 0, ARRAY_SIZE(BK1080::MOD_TYPES), 1);
+      break;
+    case RADIO_SI4732:
+      break;
+    }
+  }
 
   void updateStep(bool inc) {
     step = IncDec(step, 0, ARRAY_SIZE(StepFrequencyTable), inc ? 1 : -1);

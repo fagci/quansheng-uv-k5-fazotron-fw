@@ -98,7 +98,7 @@ struct VFO {
   uint32_t f : 27;
   uint32_t offset : 27;
   OffsetDirection offsetDir;
-  ModulationType modulation : 4;
+  uint8_t modulation : 4;
   FilterBandwidth bw : 2;
   TXOutputPower power : 2;
   uint8_t codeRX;

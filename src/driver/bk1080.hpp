@@ -11,6 +11,8 @@
 
 class BK1080 : public AbstractRadio {
 public:
+  static constexpr ModulationType MOD_TYPES[] = {MOD_WFM};
+
   typedef enum {
     BK1080_BAND_87_5_108,
     BK1080_BAND_76_108,
