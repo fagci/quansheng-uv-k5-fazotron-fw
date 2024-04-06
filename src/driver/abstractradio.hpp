@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stddef.h>
 #include <stdint.h>
 
 enum ModulationType {
@@ -110,6 +111,8 @@ struct VFO {
   Chip chip : 2;
 
   VFO *getVfo() { return this; }
+
+  static constexpr size_t size() { return sizeof(VFO); };
 } __attribute__((packed));
 
 class AbstractRadio : protected VFO {

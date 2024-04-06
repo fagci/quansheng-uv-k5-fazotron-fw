@@ -16,7 +16,7 @@
 
 class Svc {
 public:
-  static SettingsService settings;
+  static EEPROMService settings;
 
   static KeyboardService keyboard;
   static BacklightService backlight;

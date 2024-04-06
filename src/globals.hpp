@@ -1,10 +1,10 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "driver/bk4819.hpp"
 #include "driver/keyboard.hpp"
 #include "svc/channel.hpp"
 #include <stdint.h>
+#include <stddef.h>
 
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
 
@@ -73,8 +73,9 @@ typedef struct {
   AppVFOSlots *vfoSlots;
 } App;
 
-typedef struct {
+struct Scanlist {
   char name[10];
-} __attribute__((packed)) Scanlist;
+  static constexpr size_t size() { return sizeof(Scanlist); };
+} __attribute__((packed));
 
 #endif /* end of include guard: GLOBALS_H */

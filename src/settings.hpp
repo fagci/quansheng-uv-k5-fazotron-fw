@@ -75,4 +75,5 @@ struct Settings {
   uint32_t getFilterBound() {
     return bound_240_280 ? Radio::VHF_UHF_BOUND2 : Radio::VHF_UHF_BOUND1;
   }
+  static constexpr auto size() { return sizeof(Settings); };
 } __attribute__((packed));
