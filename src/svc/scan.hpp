@@ -3,9 +3,9 @@
 #include "../driver/uart.hpp"
 #include "../radio.hpp"
 #include "board.hpp"
+#include "driver/abstractradio.hpp"
 #include "listening.hpp"
-#include "svc.hpp"
-#include "svc/manager.hpp"
+#include "render.hpp"
 #include "tune.hpp"
 
 namespace svc::scan {
@@ -44,8 +44,8 @@ void (*gScanFn)(bool) = NULL;
 void next() {
   lastListenState = false;
   gScanFn(gScanForward);
-  lastSettedF = Board::radio->getF();
-  SetTimeout(&timeout, Board::radio.vfo.scan.timeout);
+  lastSettedF = Board::radio.vfo()->f;
+  SetTimeout(&timeout, Board::radio.vfo()->scan.timeout);
   if (gScanRedraw) {
     svc::render::schedule();
   }
@@ -55,7 +55,7 @@ void init() {
   gScanForward = true;
   Log("SCAN init, SF:%u", !!gScanFn);
   if (!gScanFn) {
-    if (Board::radio.channel >= 0) {
+    if (Board::radio.vfo()->channel >= 0) {
       gScanFn = svc::tune::nextCH;
     } else {
       gScanFn = svc::tune::nextBandFreq;
@@ -65,11 +65,11 @@ void init() {
 }
 
 void update() {
+  ScanSettings *scan = &Board::radio.vfo()->scan;
   if (lastListenState != svc::listen::isListening()) {
-    lastListenState = svc::listen.isListening();
-    SetTimeout(&timeout, lastListenState
-                             ? SCAN_TIMEOUTS[Board::radio.scan.openedTimeout]
-                             : SCAN_TIMEOUTS[Board::radio.scan.closedTimeout]);
+    lastListenState = svc::listen::isListening();
+    SetTimeout(&timeout, lastListenState ? SCAN_TIMEOUTS[scan->openedTimeout]
+                                         : SCAN_TIMEOUTS[scan->closedTimeout]);
   }
 
   if (CheckTimeout(&timeout)) {

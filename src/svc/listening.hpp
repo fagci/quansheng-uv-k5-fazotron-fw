@@ -3,13 +3,21 @@
 #include "../board.hpp"
 #include "../frequency.hpp"
 #include "backlight.hpp"
+#include "driver/abstractradio.hpp"
 #include "svc/apps.hpp"
 
 namespace svc::listen {
+
+struct Measurement {
+  uint16_t r;
+  uint8_t n;
+  uint8_t g;
+};
+
 namespace {
 TXState gTxState;
 
-Loot *msm;
+Measurement *msm;
 uint32_t lastTailTone = 0;
 uint16_t rssi = 0;
 bool _isListening = false;
@@ -17,8 +25,9 @@ bool _monitorMode = false;
 } // namespace
 
 bool isSqOpenSimple(uint16_t r) {
-  uint8_t band = Board::radio.vfo.f > Board::settings.getFilterBound() ? 1 : 0;
-  uint8_t sq = Board::radio.vfo.sq.level;
+  const VFO *vfo = Board::radio.vfo();
+  uint8_t band = vfo->f > Board::settings.getFilterBound() ? 1 : 0;
+  uint8_t sq = vfo->sq.level;
   uint16_t ro = SQ[band][0][sq];
   uint16_t rc = SQ[band][1][sq];
 
@@ -31,7 +40,8 @@ bool isSqOpenSimple(uint16_t r) {
 }
 
 bool isSquelchOpen() {
-  if (Board::radio.vfo.sq.openTime || Board::radio.vfo.sq.closeTime) {
+  const SquelchSettings *sq = &Board::radio.vfo()->sq;
+  if (sq->openTime || sq->closeTime) {
     return isSqOpenSimple(rssi);
   }
   return Board::radio.isSquelchOpen();
@@ -83,17 +93,17 @@ void toggleTX(bool on) {
     return;
   }
   uint8_t power = 0;
-  uint32_t txF = Board::radio.getTXFEx(&Board::radio.vfo);
+  uint32_t txF = Board::radio.getTXFEx(Board::radio.vfo());
 
   if (on) {
     gTxState = getTXState(txF);
-    power = Board::radio.calculateOutputPower(txF);
+    power = Band::calculateOutputPower(txF, Board::settings.powCalib);
     if (power > 0x91) {
       power = 0;
       gTxState = TX_POW_OVERDRIVE;
       return;
     }
-    power >>= 2 - Board::radio.vfo.power;
+    power >>= 2 - Board::radio.vfo()->power;
   }
 }
 
@@ -106,7 +116,7 @@ void intrHandler(uint16_t intBits) {
   }
 }
 
-void deinit() { Board::radio.idle(); }
+void deinit() { Board::radio.idle(true); }
 void toggleMonitorMode() { _monitorMode = !_monitorMode; }
 bool isListening() { return _isListening; }
 
@@ -119,22 +129,21 @@ void update() {
     _isListening = false;
   }
 
-  bool rx = msm->open;
   if (Board::radio.getTxState() != TX_ON) {
     if (_monitorMode) {
-      rx = true;
+      _isListening = true;
     } else if (Board::settings.noListen &&
                (svc::apps::currentAppId() == APP_SPECTRUM ||
                 svc::apps::currentAppId() == APP_ANALYZER)) {
-      rx = false;
+      _isListening = false;
     } else if (Board::settings.skipGarbageFrequencies &&
-               (Board::radio.vfo.f % 1300000 == 0)) {
-      rx = false;
+               (Board::radio.vfo()->f % 1300000 == 0)) {
+      _isListening = false;
     }
-    Board::radio.toggleRX(rx);
+    Board::radio.toggleRX(_isListening);
   }
 
-  if (Board::radio.vfo.scan.timeout < 10) {
+  if (Board::radio.vfo()->scan.timeout < 10) {
     Board::radio.resetRSSI();
   }
 }

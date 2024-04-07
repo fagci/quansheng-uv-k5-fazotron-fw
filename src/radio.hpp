@@ -10,7 +10,7 @@
 #include "utils.hpp"
 #include <stdint.h>
 
-class Radio : AbstractRadio {
+class Radio : public AbstractRadio {
 public:
   static BK4819 bk4819;
   static BK1080 bk1080;
@@ -35,6 +35,7 @@ public:
   uint32_t getF() { return mainRadio->getF(); }
   void rxEnable() { mainRadio->rxEnable(); }
   void idle(bool on) { mainRadio->idle(on); }
+  void sleep(bool on) { mainRadio->sleep(on); }
   void resetRSSI() {
     if (mainRadio == &bk4819) {
       bk4819.resetRSSI();

@@ -127,10 +127,13 @@ public:
   virtual uint8_t getNoise() = 0;
   virtual uint8_t getGlitch() = 0;
   virtual uint8_t getSNR() = 0;
+
   virtual bool isSquelchOpen() = 0;
 
   virtual void rxEnable() = 0;
   virtual void mute(bool) = 0;
   virtual void sleep(bool) = 0;
   virtual void idle(bool) = 0;
+
+  VFO *vfo() { return getVfo(); }
 };

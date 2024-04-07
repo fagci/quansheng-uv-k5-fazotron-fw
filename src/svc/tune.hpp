@@ -1,10 +1,17 @@
 #pragma once
 
 #include "../board.hpp"
+#include "../scheduler.hpp"
 #include "channel.hpp"
+#include "settings.hpp"
 
 namespace svc::tune {
 constexpr static uint32_t upConverterValues[3] = {0, 5000000, 12500000};
+
+Radio::Filter filterByF(uint32_t f) {
+  return f < Board::settings.getFilterBound() ? Radio::FILTER_VHF
+                                              : Radio::FILTER_UHF;
+}
 
 void tuneTo(uint32_t f) {
   Board::radio.setF(f);
@@ -27,11 +34,6 @@ void vfoLoadCH(uint8_t i) {
 }
 
 void tuneTo(ChannelService::CH ch) {}
-
-void onVfoUpdate() {
-  Scheduler::taskRemove(saveCurrentCH);
-  Scheduler::taskAdd("CH save", saveCurrentCH, 2000, false, 0);
-}
 
 void loadCurrentCH() {
   for (uint8_t i = 0; i < 2; ++i) {
@@ -164,8 +166,8 @@ void nextBandFreqEx(bool next, bool precise) {
   tuneToPure(vfo.f, precise);
 }
 
-Radio::Filter filterByF(uint32_t f) {
-  return f < settingsService.filterBound ? Radio::FILTER_VHF
-                                         : Radio::FILTER_UHF;
+void onVfoUpdate() {
+  Scheduler::taskRemove(saveCurrentCH);
+  Scheduler::taskAdd("CH save", saveCurrentCH, 2000, false, 0);
 }
 }; // namespace svc::tune
