@@ -2,8 +2,8 @@
 
 #include "../board.hpp"
 #include "../frequency.hpp"
-#include "manager.hpp"
-#include "svc.hpp"
+#include "backlight.hpp"
+#include "svc/apps.hpp"
 
 namespace svc::listen {
 namespace {
@@ -66,7 +66,7 @@ TXState getTXState(uint32_t txF) {
     return TX_BAT_LOW;
   }
 
-  if (gChargingWithTypeC || gBatteryVoltage > 880) {
+  if (Board::battery.isCharging() || Board::battery.voltage() > 880) {
     return TX_VOL_HIGH;
   }
 
@@ -123,8 +123,9 @@ void update() {
   if (Board::radio.getTxState() != TX_ON) {
     if (_monitorMode) {
       rx = true;
-    } else if (Board::settings.noListen && (gCurrentApp->id == APP_SPECTRUM ||
-                                            gCurrentApp->id == APP_ANALYZER)) {
+    } else if (Board::settings.noListen &&
+               (svc::apps::currentAppId() == APP_SPECTRUM ||
+                svc::apps::currentAppId() == APP_ANALYZER)) {
       rx = false;
     } else if (Board::settings.skipGarbageFrequencies &&
                (Board::radio.vfo.f % 1300000 == 0)) {

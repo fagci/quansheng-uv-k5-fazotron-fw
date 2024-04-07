@@ -87,6 +87,10 @@ public:
     batteryPercent = voltsToPercent(batteryVoltage, batteryType);
   }
 
+  uint8_t percentage() { return batteryPercent; }
+  uint16_t voltage() { return batteryVoltage; }
+  bool isCharging() { return chargingWithTypeC; }
+
 private:
   ADC *adc;
   uint16_t calibration = 2005;
