@@ -13,12 +13,6 @@ Radio::Filter filterByF(uint32_t f) {
                                               : Radio::FILTER_UHF;
 }
 
-void tuneTo(uint32_t f) {
-  Board::radio.setF(f);
-  Radio::Filter filterNeeded = filterByF(f);
-  Board::radio.selectFilter(filterNeeded);
-}
-
 uint32_t GetScreenF(uint32_t f) {
   return f - upConverterValues[Board::settings.upconverter];
 }
@@ -27,41 +21,12 @@ uint32_t GetTuneF(uint32_t f) {
   return f + upConverterValues[Board::settings.upconverter];
 }
 
-void vfoLoadCH(uint8_t i) {
-  CH ch;
-  CHANNELS_Load(gCH[i].vfo.channel, &gCH[i]);
-  strncpy(gCHNames[i], ch.name, 9);
-}
-
-void tuneTo(ChannelService::CH ch) {}
-
-void loadCurrentCH() {
-  for (uint8_t i = 0; i < 2; ++i) {
-    CHS_Load(i, &gCH[i]);
-    if (gCH[i].vfo.channel >= 0) {
-      vfoLoadCH(i);
-    }
-    gCHBands[i] = BAND_ByFrequency(gCH[i].f);
-
-    LOOT_Replace(&gLoot[i], gCH[i].f);
-  }
-
-  radio = &gCH[settings->activeCH];
-  gCurrentLoot = &gLoot[settings->activeCH];
-  setupByCurrentCH();
-}
-
-void setupByCurrentCH() {
-  setupParams();
-  toggleBK1080(vfo.modulation == MOD_WFM && isBK1080Range(vfo.f));
-  tuneToPure(vfo.f, true);
-}
 
 // USE CASE: set vfo temporary for current app
 void tuneTo(uint32_t f) {
-  vfo.f = f;
-  vfo.vfo.channel = -1;
-  setupByCurrentCH();
+  Board::radio.setF(f);
+  Radio::Filter filterNeeded = filterByF(f);
+  Board::radio.selectFilter(filterNeeded);
 }
 
 // USE CASE: set vfo and use in another app
@@ -69,8 +34,6 @@ void tuneToSave(uint32_t f) {
   tuneTo(f);
   saveCurrentCH();
 }
-
-void saveCurrentCH() { CHS_Save(settings->activeCH, radio); }
 
 void nextVFO() {
   settings->activeCH = !gSettings.activeCH;

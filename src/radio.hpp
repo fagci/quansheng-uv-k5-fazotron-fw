@@ -31,7 +31,11 @@ public:
     mainRadio = &bk4819;
   }
 
-  void setF(uint32_t freq) { mainRadio->setF(freq); }
+  void setF(uint32_t freq) {
+    f = freq;
+    channel = -1;
+    mainRadio->setF(freq);
+  }
   uint32_t getF() { return mainRadio->getF(); }
   void rxEnable() { mainRadio->rxEnable(); }
   void idle(bool on) { mainRadio->idle(on); }
