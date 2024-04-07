@@ -1,11 +1,14 @@
 #pragma once
 
 #include "../apps/apps.hpp"
+#include "scheduler.hpp"
 #include "svc.hpp"
 
-class AppsService : public Svc {
-public:
-  void init() {}
-  void update() { APPS_update(); }
-  void deinit() {}
-};
+namespace svc::apps {
+void update() { APPS_update(); }
+void stop() { Scheduler::taskRemove(update); }
+void start(uint32_t interval = 1) {
+  stop();
+  Scheduler::taskAdd("Svc", update, interval, true, 100);
+}
+}; // namespace svc::apps

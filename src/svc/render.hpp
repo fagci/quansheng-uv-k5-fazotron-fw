@@ -4,30 +4,33 @@
 #include "../board.hpp"
 #include "../driver/system.hpp"
 #include "../ui/statusline.hpp"
+#include "scheduler.hpp"
 #include "svc/svc.hpp"
 
-class RenderService : public Svc {
-  const uint32_t RENDER_TIME = 40;
+namespace svc::render {
+const uint32_t RENDER_TIME = 40;
 
-public:
-  void init() {}
+namespace {
+bool redrawScreen;
+uint32_t lastRender = 0;
+} // namespace
 
-  void update() {
-    if (redrawScreen && Now() - lastRender >= RENDER_TIME) {
-      APPS_render();
-      STATUSLINE_render();
+void schedule() { redrawScreen = true; }
 
-      Board::display.render();
-      lastRender = elapsedMilliseconds;
-      redrawScreen = false;
-    }
+void update() {
+  if (redrawScreen && Now() - lastRender >= RENDER_TIME) {
+    APPS_render();
+    STATUSLINE_render();
+
+    Board::display.render();
+    lastRender = elapsedMilliseconds;
+    redrawScreen = false;
   }
+}
+void stop() { Scheduler::taskRemove(update); }
+void start(uint32_t interval = 25) {
+  stop();
+  Scheduler::taskAdd("Svc", update, interval, true, 255);
+}
 
-  void deinit() {}
-
-  void schedule() { redrawScreen = true; }
-
-protected:
-  bool redrawScreen;
-  uint32_t lastRender = 0;
-};
+}; // namespace svc::render

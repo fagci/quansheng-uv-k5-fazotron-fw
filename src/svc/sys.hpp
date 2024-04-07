@@ -1,15 +1,14 @@
 #pragma once
 
+#include "scheduler.hpp"
 #include "svc.hpp"
-#include "svc/manager.hpp"
 #include "ui/statusline.hpp"
 
-class SystemService : public Svc {
-public:
-  void init() {}
-  void update() {
-    STATUSLINE_update();
-    S::backlight.update();
-  }
-  void deinit() {}
-};
+namespace svc::statusline {
+void update() { STATUSLINE_update(); }
+void stop() { Scheduler::taskRemove(update); }
+void start(uint32_t interval = 1000) {
+  stop();
+  Scheduler::taskAdd("Svc", update, interval, true, 150);
+}
+} // namespace svc::statusline
