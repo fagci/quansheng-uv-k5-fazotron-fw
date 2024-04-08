@@ -3,13 +3,11 @@
 
 #include "driver/keyboard.hpp"
 #include "svc/channel.hpp"
+#include "svc/settings.hpp"
 #include <stdint.h>
 #include <stddef.h>
 
 #define getsize(V) char (*__ #V)()[sizeof(V)] = 1;
-
-extern const uint16_t StepFrequencyTable[12];
-extern const SquelchType sqTypeValues[4];
 
 typedef enum {
   APP_NONE,
@@ -37,27 +35,10 @@ typedef enum {
   APP_MESSENGER,
 } AppType_t;
 
-typedef enum {
-  TX_UNKNOWN,
-  TX_ON,
-  TX_VOL_HIGH,
-  TX_BAT_LOW,
-  TX_DISABLED,
-  TX_DISABLED_UPCONVERTER,
-  TX_POW_OVERDRIVE,
-} TXState;
-
-typedef enum {
-  CH_CHANNEL,
-  CH_VFO,
-  CH_BAND,
-  CH_EMPTY = 255,
-} ChannelType;
-
 typedef struct {
   uint8_t count;
   uint8_t maxCount;
-  ChannelService::CH *slots[5];
+  CH *slots[5];
 } AppVFOSlots;
 
 typedef struct {

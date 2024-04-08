@@ -5,6 +5,7 @@
 
 namespace svc::channel {
 
+
 CH currentCh;
 uint32_t gScanlist[128] = {0};
 uint16_t gScanlistSize = 0;

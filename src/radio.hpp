@@ -5,7 +5,6 @@
 #include "driver/bk1080.hpp"
 #include "driver/bk4819.hpp"
 #include "driver/system.hpp"
-#include "globals.hpp"
 #include "misc.hpp"
 #include "utils.hpp"
 #include <stdint.h>
@@ -52,7 +51,6 @@ public:
       bk4819.squelch(level, f);
     }
   }
-  uint32_t getStep() { return StepFrequencyTable[step]; }
 
   virtual bool inRange(uint32_t f) { return mainRadio->inRange(f); }
 

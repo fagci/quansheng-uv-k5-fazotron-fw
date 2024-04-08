@@ -79,6 +79,16 @@ typedef enum {
   TX_POW_HIGH,
 } TXOutputPower;
 
+typedef enum {
+  TX_UNKNOWN,
+  TX_ON,
+  TX_VOL_HIGH,
+  TX_BAT_LOW,
+  TX_DISABLED,
+  TX_DISABLED_UPCONVERTER,
+  TX_POW_OVERDRIVE,
+} TXState;
+
 typedef struct {
   uint8_t timeout : 8;
   ScanTimeout openedTimeout : 4;
@@ -110,7 +120,12 @@ struct VFO {
   uint8_t gainIndex : 5;
   Chip chip : 2;
 
+  constexpr static uint16_t StepFrequencyTable[12] = {
+      1, 10, 100, 250, 500, 625, 833, 900, 1000, 1250, 2500, 10000,
+  };
+
   VFO *getVfo() { return this; }
+  uint32_t getStepSize() { return StepFrequencyTable[step]; }
 
   static constexpr size_t size() { return sizeof(VFO); };
 } __attribute__((packed));
@@ -136,4 +151,5 @@ public:
   virtual void idle(bool) = 0;
 
   VFO *vfo() { return getVfo(); }
+  uint32_t getStep() { return getStepSize(); }
 };
